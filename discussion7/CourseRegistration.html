@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Browser tab -->
+    <title>Course Registration</title>
+
+    <!-- Imports design.css styling -->
+    <link rel="stylesheet" href="../design.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Page header -->
+        <header>
+            <h1>Course Registration</h1>
+            <p>Register for new courses and calculate credit hours. </p>
+        </header>
+
+        <!-- Course selection -->
+        <section>
+            <h2>Select a Course</h2>
+
+            <!-- Dropdown menu -->
+            <select id="courseSelect">
+                <option value="">-- Select a Course --</option>
+            </select>
+        </section>
+
+        <!-- Display selected course -->
+        <section>
+            <h2>Selected Courses</h2>
+            <div id="selectedCourses">
+                No courses selected.
+            </div>
+        </section>
+
+        <!-- Total credit hours -->
+        <section>
+            <h2>Total Credit Hours</h2>
+            <div id="totalHours">0</div>
+            <button id="resetButton">Reset</button>
+        </section>
+
+    </div>
+
+    <script>
+        //Beginning of JavaScript code
+
+        //Define Course class w/ code, creditHours attributes
+        class Course {
+            constructor(code, creditHours) {
+                this.code = code;
+                this.creditHours = creditHours;
+            }
+        }
+
+        //Construct an array of Course objects
+        const courses = [
+            new Course("CMSC 412", 3),
+            new Course("CMSC 430", 3),
+            new Course("CMSC 440", 3),
+            new Course("CMSC 451", 3),
+            new Course("CMSC 495", 3),
+            new Course("CMIT 326", 3),
+            new Course("CMIT 426", 3)
+        ];
+
+        //Populates course selection dropdown menu
+        const courseSelect = document.getElementById("courseSelect");
+
+        courses.forEach(function (course) {
+            const option = document.createElement("option");
+            option.textContent = course.code;
+            option.value = course.creditHours;
+            courseSelect.appendChild(option);
+        });
+
+        //Initialize array of course selections
+        const selectedCourses = [];
+
+        //Initializes page elements
+        const selectedCoursesDiv = document.getElementById("selectedCourses");
+        const totalHoursDiv = document.getElementById("totalHours");
+
+        //EventListener to detect changes in course selection
+        courseSelect.addEventListener("change", function () {
+            const selectedCode = courseSelect.options[courseSelect.selectedIndex].text;
+
+            if (courseSelect.value === "") {
+                return;
+            }
+
+            const selectedCourse = courses.find(function (course) {
+                return course.code === selectedCode;
+            });
+
+            //Prevent duplicate course selections
+            if (selectedCourses.some(function (course) {
+                return course.code === selectedCourse.code;
+            })) {
+                return;
+            }
+
+            selectedCourses.push(selectedCourse);
+            selectedCoursesDiv.innerHTML = "";
+
+            //Loops through selected courses and displays
+            selectedCourses.forEach(function (course) {
+                const courseElement = document.createElement("p");
+                courseElement.textContent = course.code + " - " + course.creditHours + " credit hours";
+                selectedCoursesDiv.appendChild(courseElement);
+            });
+
+            //Calculate total credit hours
+            let totalHours = 0;
+
+            selectedCourses.forEach(function (course) {
+                totalHours += course.creditHours;
+            });
+
+            totalHoursDiv.textContent = totalHours;
+
+            //Verify selected course
+            console.log(selectedCourses);
+        });
+
+        //Reset course selections
+        const resetButton = document.getElementById("resetButton");
+
+        resetButton.addEventListener("click", function () {
+            selectedCourses.length = 0;
+            selectedCoursesDiv.innerHTML = "No courses selected.";
+            totalHoursDiv.textContent = "0";
+            courseSelect.value = "";
+        });
+
+        //Verify creation of array
+        console.log(courses);
+    </script>
+
+</body>
+</html>

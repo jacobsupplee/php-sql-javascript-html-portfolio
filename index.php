@@ -48,6 +48,13 @@
                         Discussion 6: JavaScript Arrays
                     </a>
                 </li>
+
+                <li>
+                    <a href="discussion7/CourseRegistration.html">
+                        Discussion 7: Interactive Course Registration
+                    </a>
+                </li>
+
             </ul>
         </section>
 
