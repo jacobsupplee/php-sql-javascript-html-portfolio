@@ -55,6 +55,12 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="discussion8/adduser.php">
+                        Discussion 8: Client-side JavaScript and Server-side PHP Validation
+                    </a>
+                </li>
+
             </ul>
         </section>
 
