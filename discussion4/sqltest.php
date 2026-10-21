@@ -23,7 +23,12 @@
       isset($_POST['title'])    &&
       isset($_POST['category']) &&
       isset($_POST['year'])     &&
-      isset($_POST['isbn']))
+      isset($_POST['isbn'])     &&
+      trim($_POST['author'])   !== '' &&
+      trim($_POST['title'])    !== '' &&
+      trim($_POST['category']) !== '' &&
+      trim($_POST['year'])     !== '' &&
+      trim($_POST['isbn'])     !== '')
   {
     $author   = $_POST['author'];
     $title    = $_POST['title'];
