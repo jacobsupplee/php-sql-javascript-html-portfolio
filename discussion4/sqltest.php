@@ -13,6 +13,9 @@
     exit('Unable to connect to the database. Please try again later.');
   }
 
+  $message = '';
+  $formError = '';
+
   if (isset($_POST['delete']) && isset($_POST['isbn']))
   {
     // Uses a prepared statement so the ISBN is treated as a value, not SQL.
@@ -20,36 +23,38 @@
     $query = "DELETE FROM classics WHERE isbn = :isbn";
     $statement = $pdo->prepare($query);
     $statement->execute([':isbn' => $isbn]);
+    $message = $statement->rowCount() > 0
+      ? 'Book deleted successfully.'
+      : 'No book was found with that ISBN.';
   }
 
-  if (isset($_POST['author'])   &&
-      isset($_POST['title'])    &&
-      isset($_POST['category']) &&
-      isset($_POST['year'])     &&
-      isset($_POST['isbn'])     &&
-      trim($_POST['author'])   !== '' &&
-      trim($_POST['title'])    !== '' &&
-      trim($_POST['category']) !== '' &&
-      filter_var($_POST['year'], FILTER_VALIDATE_INT) !== false &&
-      (int) $_POST['year'] >= 0 &&
-      trim($_POST['isbn'])     !== '')
+  if (isset($_POST['author']) || isset($_POST['title']) ||
+      isset($_POST['category']) || isset($_POST['year']) || isset($_POST['isbn']))
   {
-    $author   = trim($_POST['author']);
-    $title    = trim($_POST['title']);
-    $category = trim($_POST['category']);
-    $year     = (int) $_POST['year'];
-    $isbn     = trim($_POST['isbn']);
+    $author   = trim($_POST['author'] ?? '');
+    $title    = trim($_POST['title'] ?? '');
+    $category = trim($_POST['category'] ?? '');
+    $yearInput = $_POST['year'] ?? '';
+    $isbn     = trim($_POST['isbn'] ?? '');
 
-    // Bind form values separately so they cannot change the SQL query.
-    $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
-    $statement = $pdo->prepare($query);
-    $statement->execute([
-      ':author'   => $author,
-      ':title'    => $title,
-      ':category' => $category,
-      ':year'     => $year,
-      ':isbn'     => $isbn
-    ]);
+    // Validate submitted values on the server before inserting a record.
+    $year = filter_var($yearInput, FILTER_VALIDATE_INT);
+    if ($author === '' || $title === '' || $category === '' || $isbn === '' ||
+        $year === false || $year < 0) {
+      $formError = 'Enter all fields and provide a non-negative whole-number year.';
+    } else {
+      // Bind form values separately so they cannot change the SQL query.
+      $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
+      $statement = $pdo->prepare($query);
+      $statement->execute([
+        ':author'   => $author,
+        ':title'    => $title,
+        ':category' => $category,
+        ':year'     => $year,
+        ':isbn'     => $isbn
+      ]);
+      $message = 'Book added successfully.';
+    }
   }
 
   echo <<<_END
@@ -62,6 +67,13 @@
            <input type="submit" value="ADD RECORD">
   </pre></form>
 _END;
+
+  if ($message !== '') {
+    echo '<p role="status">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+  }
+  if ($formError !== '') {
+    echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES, 'UTF-8') . '</p>';
+  }
 
   $query  = "SELECT * FROM classics";
   $result = $pdo->query($query);
