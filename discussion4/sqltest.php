@@ -50,11 +50,11 @@
 
   echo <<<_END
   <form action="sqltest.php" method="post"><pre>
-    Author <input type="text" name="author">
-     Title <input type="text" name="title">
-  Category <input type="text" name="category">
-      Year <input type="text" name="year">
-      ISBN <input type="text" name="isbn">
+    Author <input type="text" name="author" required>
+     Title <input type="text" name="title" required>
+  Category <input type="text" name="category" required>
+      Year <input type="number" name="year" min="0" step="1" required>
+      ISBN <input type="text" name="isbn" required>
            <input type="submit" value="ADD RECORD">
   </pre></form>
 _END;
