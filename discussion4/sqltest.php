@@ -7,7 +7,10 @@
   }
   catch (PDOException $e)
   {
-    throw new PDOException($e->getMessage(), (int)$e->getCode());
+    // Keep connection details in the server log instead of exposing them to visitors.
+    error_log('Publications database connection failed: ' . $e->getMessage());
+    http_response_code(500);
+    exit('Unable to connect to the database. Please try again later.');
   }
 
   if (isset($_POST['delete']) && isset($_POST['isbn']))
