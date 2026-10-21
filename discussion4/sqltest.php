@@ -12,9 +12,11 @@
 
   if (isset($_POST['delete']) && isset($_POST['isbn']))
   {
-    $isbn   = get_post($pdo, 'isbn');
-    $query  = "DELETE FROM classics WHERE isbn=$isbn";
-    $result = $pdo->query($query);
+    // Uses a prepared statement so the ISBN is treated as a value, not SQL.
+    $isbn = $_POST['isbn'];
+    $query = "DELETE FROM classics WHERE isbn = :isbn";
+    $statement = $pdo->prepare($query);
+    $statement->execute([':isbn' => $isbn]);
   }
 
   if (isset($_POST['author'])   &&
