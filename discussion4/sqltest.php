@@ -13,7 +13,7 @@
   if (isset($_POST['delete']) && isset($_POST['isbn']))
   {
     // Uses a prepared statement so the ISBN is treated as a value, not SQL.
-    $isbn = $_POST['isbn'];
+    $isbn = trim($_POST['isbn']);
     $query = "DELETE FROM classics WHERE isbn = :isbn";
     $statement = $pdo->prepare($query);
     $statement->execute([':isbn' => $isbn]);
@@ -30,11 +30,11 @@
       trim($_POST['year'])     !== '' &&
       trim($_POST['isbn'])     !== '')
   {
-    $author   = $_POST['author'];
-    $title    = $_POST['title'];
-    $category = $_POST['category'];
-    $year     = $_POST['year'];
-    $isbn     = $_POST['isbn'];
+    $author   = trim($_POST['author']);
+    $title    = trim($_POST['title']);
+    $category = trim($_POST['category']);
+    $year     = trim($_POST['year']);
+    $isbn     = trim($_POST['isbn']);
 
     // Bind form values separately so they cannot change the SQL query.
     $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
@@ -86,8 +86,4 @@ $r4 = htmlspecialchars($row->isbn);
 _END;
   }
 
-  function get_post($pdo, $var)
-  {
-    return $pdo->quote($_POST[$var]);
-  }
 ?>
