@@ -8,3 +8,5 @@ favicon.ico
 
 # VS Code files
 .vscode/
+# Local database credentials
+/config.local.php
