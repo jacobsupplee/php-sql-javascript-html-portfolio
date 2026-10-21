@@ -1,123 +1,123 @@
-<?php 
-// CMSC 340: Develop a PHP Script to Create and Manipulate a PHP Array of Course Objects
-//Jacob Supplee
-//September 8th, 2026
+<?php
+// CMSC 340: PHP PDO MyCourses Table
+// Database credentials are stored in the ignored local config file.
+$config = require __DIR__ . '/../config.local.php';
+$database = $config['cmsc340'];
 
-//Database information
-$host = "localhost"; 
-$database = "cmsc340"; 
-$username = "root"; 
-$password = "mysql"; 
+$host = $database['host'];
+$port = $database['port'];
+$dbName = $database['database'];
+$username = $database['username'];
+$password = $database['password'];
 
-try { 
-//Creates PDO connection to CMSC340 database
-$pdo = new PDO( "mysql:host=$host;dbname=$database", $username, $password ); 
-//Allows PDO to detect errors
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//Catches and handles errors
-} catch (PDOException $e) { die("Database connection failed!: " . $e->getMessage());
-} 
-//Adds new course to mycourses table
-if (isset($_POST['add_course'])) {
-    $courseCode = $_POST['course_code'];
-    $courseTitle = $_POST['course_title'];
-    $creditHours = $_POST['course_credit_hours'];
-
-    //Prepares SQL statement to insert course information
-    $sql = "INSERT INTO mycourses 
-            (course_code, course_title, course_credit_hours)
-            VALUES (:course_code, :course_title, :course_credit_hours)";
-
-    $statement = $pdo->prepare($sql);
-
-    //Executes SQL statement with form data
-    $statement->execute([
-        ':course_code' => $courseCode,
-        ':course_title' => $courseTitle,
-        ':course_credit_hours' => $creditHours
-    ]);
+try {
+    $pdo = new PDO(
+        "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4",
+        $username,
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]
+    );
+} catch (PDOException $e) {
+    error_log('CMSC 340 database connection failed: ' . $e->getMessage());
+    http_response_code(500);
+    exit('Database connection failed. Check your local database configuration.');
 }
 
-//Retrieves all courses from mycourses table
-$sql = "SELECT course_code, course_title, course_credit_hours
-        FROM mycourses";
+// Add a course using a prepared statement.
+if (isset($_POST['add_course'])) {
+    $courseCode = trim($_POST['course_code'] ?? '');
+    $courseTitle = trim($_POST['course_title'] ?? '');
+    $creditHoursInput = $_POST['course_credit_hours'] ?? '';
 
-$statement = $pdo->query($sql);
+    $creditHours = filter_var($creditHoursInput, FILTER_VALIDATE_INT);
+
+    if ($courseCode !== '' && $courseTitle !== '' &&
+        $creditHours !== false && $creditHours > 0) {
+        $sql = "INSERT INTO mycourses
+                (course_code, course_title, course_credit_hours)
+                VALUES (:course_code, :course_title, :course_credit_hours)";
+        $statement = $pdo->prepare($sql);
+        $statement->execute([
+            ':course_code' => $courseCode,
+            ':course_title' => $courseTitle,
+            ':course_credit_hours' => $creditHours,
+        ]);
+    } else {
+        $formError = 'Enter a course code, course title, and positive whole-number credit hours.';
+    }
+}
+
+$statement = $pdo->query(
+    "SELECT course_code, course_title, course_credit_hours FROM mycourses"
+);
 $courses = $statement->fetchAll();
 
-
+$totalCreditHours = 0;
+foreach ($courses as $course) {
+    $totalCreditHours += (int) $course['course_credit_hours'];
+}
 ?>
 <!DOCTYPE html>
-
-<!-- Sets the browser tab title -->
-<html> <head> <title>My UMGC Courses</title> </head>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My UMGC Courses</title>
+</head>
 <body>
-<!-- Displays the main heading for the page -->
 <h1>My UMGC Courses</h1>
 
-<!-- Creates form for entering new course info -->
-<form method="post">
+<?php if (!empty($formError)): ?>
+    <p role="alert"><?php echo htmlspecialchars($formError, ENT_QUOTES, 'UTF-8'); ?></p>
+<?php endif; ?>
 
+<form method="post">
     <label for="course_code">Course Code:</label>
-    <input type="text" id="course_code" name="course_code">
+    <input type="text" id="course_code" name="course_code" required>
 
     <br><br>
 
     <label for="course_title">Course Title:</label>
-    <input type="text" id="course_title" name="course_title">
+    <input type="text" id="course_title" name="course_title" required>
 
     <br><br>
 
     <label for="course_credit_hours">Course Credit Hours:</label>
-    <input type="number" id="course_credit_hours" name="course_credit_hours">
+    <input type="number" id="course_credit_hours" name="course_credit_hours"
+           min="1" step="1" required>
 
     <br><br>
 
-        <!-- Button to submit form and add course to databse -->
-    <input type="submit" name="add_course" value="Add">
-
+    <button type="submit" name="add_course" value="1">Add Course</button>
 </form>
 
 <h2>My Courses</h2>
-
-<!-- Creates a table to display all of the courses stored in the database -->
 <table border="1">
-
-    <tr>
-        <th>Course Code</th>
-        <th>Course Title</th>
-        <th>Course Credit Hours</th>
-    </tr>
-
-    
-    <!-- Loops thru each course retrieved from database -->
-    <?php foreach ($courses as $course) { ?>
-        
-          <!-- Creates a table row for the current course of the loop iteration -->
+    <thead>
         <tr>
-            <td><?php echo $course['course_code']; ?></td>
-            <td><?php echo $course['course_title']; ?></td>
-            <td><?php echo $course['course_credit_hours']; ?></td>
+            <th>Course Code</th>
+            <th>Course Title</th>
+            <th>Course Credit Hours</th>
         </tr>
-<?php } ?>
-
+    </thead>
+    <tbody>
+    <?php foreach ($courses as $course): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($course['course_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($course['course_title'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo (int) $course['course_credit_hours']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
 </table>
-
-<?php
-
-//Calculates the total credit hours
-$totalCreditHours = 0;
-
-foreach ($courses as $course) {
-    $totalCreditHours += $course['course_credit_hours'];
-}
-
-?>
 
 <p>
     Total credit hours of my UMGC courses over the last 3 terms =
     <?php echo $totalCreditHours; ?>
 </p>
-
-</body> </html>
+</body>
+</html>
