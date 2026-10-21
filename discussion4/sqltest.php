@@ -25,15 +25,22 @@
       isset($_POST['year'])     &&
       isset($_POST['isbn']))
   {
-    $author   = get_post($pdo, 'author');
-    $title    = get_post($pdo, 'title');
-    $category = get_post($pdo, 'category');
-    $year     = get_post($pdo, 'year');
-    $isbn     = get_post($pdo, 'isbn');
-    
-    $query    = "INSERT INTO classics VALUES" .
-      "($author, $title, $category, $year, $isbn)";
-    $result = $pdo->query($query);
+    $author   = $_POST['author'];
+    $title    = $_POST['title'];
+    $category = $_POST['category'];
+    $year     = $_POST['year'];
+    $isbn     = $_POST['isbn'];
+
+    // Bind form values separately so they cannot change the SQL query.
+    $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
+    $statement = $pdo->prepare($query);
+    $statement->execute([
+      ':author'   => $author,
+      ':title'    => $title,
+      ':category' => $category,
+      ':year'     => $year,
+      ':isbn'     => $isbn
+    ]);
   }
 
   echo <<<_END
