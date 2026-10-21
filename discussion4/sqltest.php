@@ -27,13 +27,14 @@
       trim($_POST['author'])   !== '' &&
       trim($_POST['title'])    !== '' &&
       trim($_POST['category']) !== '' &&
-      trim($_POST['year'])     !== '' &&
+      filter_var($_POST['year'], FILTER_VALIDATE_INT) !== false &&
+      (int) $_POST['year'] >= 0 &&
       trim($_POST['isbn'])     !== '')
   {
     $author   = trim($_POST['author']);
     $title    = trim($_POST['title']);
     $category = trim($_POST['category']);
-    $year     = trim($_POST['year']);
+    $year     = (int) $_POST['year'];
     $isbn     = trim($_POST['isbn']);
 
     // Bind form values separately so they cannot change the SQL query.
