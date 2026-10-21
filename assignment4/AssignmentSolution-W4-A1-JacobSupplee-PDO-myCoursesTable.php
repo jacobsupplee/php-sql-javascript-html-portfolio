@@ -28,9 +28,16 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    //Logs technical details for debugging without showing them to visitors
+    //Log details for troubleshooting; show them only during local development.
     error_log('CMSC 340 database connection failed: ' . $e->getMessage());
     http_response_code(500);
+
+    $serverName = $_SERVER['SERVER_NAME'] ?? '';
+    if (in_array($serverName, ['localhost', '127.0.0.1'], true)) {
+        exit('Local database connection failed: ' .
+            htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
+    }
+
     exit('Database connection failed. Check your local database configuration.');
 }
 
