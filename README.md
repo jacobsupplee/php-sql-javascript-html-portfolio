@@ -22,9 +22,11 @@ A collection of web projects built with HTML, CSS, JavaScript, PHP, and MySQL. T
 
 ## Run Locally
 
-1. Set up Apache with PHP support.
+1. Set up Apache with PHP and the PDO MySQL extension enabled.
 2. Place the repository in the server's document root.
-3. Start Apache and open `index.php` in your browser.
-4. Configure a MySQL database for examples that use database access.
+3. Copy `config.example.php` to `config.local.php`.
+4. Edit `config.local.php` with the database usernames and passwords for your local MySQL instance. This file is ignored by Git and must not be committed.
+5. Create the databases and tables required by the examples. The Publications example includes a SQL script in `discussion4/`.
+6. Start Apache and MySQL, then open `index.php` through your local server.
 
-See the relevant project files for any database tables or configuration it needs.
+Database-backed examples require their corresponding database and tables to exist. The local configuration file keeps credentials out of tracked source files.
