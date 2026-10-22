@@ -1,0 +1,54 @@
+/* Styles for the Publications book manager. */
+body {
+  margin: 2rem auto;
+  max-width: 1100px;
+  padding: 0 1rem;
+  color: #222;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.book-form {
+  margin-bottom: 1.5rem;
+}
+
+.book-form input {
+  margin: 0.25rem;
+  padding: 0.4rem;
+  max-width: 100%;
+}
+
+.book-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.book-table th,
+.book-table td {
+  border: 1px solid #ccc;
+  padding: 0.65rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.book-table th {
+  background: #f1f3f5;
+}
+
+button,
+input[type="submit"] {
+  cursor: pointer;
+  padding: 0.45rem 0.7rem;
+}
+
+@media (max-width: 600px) {
+  body {
+    margin-top: 1rem;
+  }
+
+  .book-table th,
+  .book-table td {
+    padding: 0.35rem;
+    font-size: 0.9rem;
+  }
+}
