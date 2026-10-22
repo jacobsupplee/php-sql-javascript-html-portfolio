@@ -73,11 +73,28 @@
     $yearInput = $_POST['year'] ?? '';
     $isbn     = trim($_POST['isbn'] ?? '');
 
-    // Validate submitted values on the server before inserting a record.
+    // Validate submitted values against the classics table's column limits.
     $year = filter_var($yearInput, FILTER_VALIDATE_INT);
+    $fieldLimits = [
+      'author' => 128,
+      'title' => 128,
+      'category' => 16,
+      'isbn' => 13,
+    ];
+    $tooLong = false;
+
+    foreach ($fieldLimits as $field => $maxLength) {
+      if (strlen($field) > $maxLength) {
+        $tooLong = true;
+        break;
+      }
+    }
+
     if ($author === '' || $title === '' || $category === '' || $isbn === '' ||
-        $year === false || $year < 0) {
-      $formError = 'Enter all fields and provide a non-negative whole-number year.';
+        $year === false || $year < 0 || $year > 32767) {
+      $formError = 'Enter all fields and provide a whole-number year between 0 and 32767.';
+    } elseif ($tooLong) {
+      $formError = 'Author and title must be 128 characters or fewer, category 16 or fewer, and ISBN 13 or fewer.';
     } else {
       // Bind form values separately so they cannot change the SQL query.
       $query = "INSERT INTO classics
