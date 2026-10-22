@@ -137,15 +137,15 @@
   <form class="book-form" action="sqltest.php" method="post">
     <input type="hidden" name="csrf_token" value="$csrfToken">
     <div><label for="author">Author</label>
-      <input id="author" type="text" name="author" required></div>
+      <input id="author" type="text" name="author" maxlength="128" required></div>
     <div><label for="title">Title</label>
-      <input id="title" type="text" name="title" required></div>
+      <input id="title" type="text" name="title" maxlength="128" required></div>
     <div><label for="category">Category</label>
-      <input id="category" type="text" name="category" required></div>
+      <input id="category" type="text" name="category" maxlength="16" required></div>
     <div><label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
       <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required></div>
     <div><label for="isbn">ISBN</label>
-      <input id="isbn" type="text" name="isbn" required></div>
+      <input id="isbn" type="text" name="isbn" maxlength="13" required></div>
     <input type="submit" value="ADD RECORD">
   </form>
 _END;
