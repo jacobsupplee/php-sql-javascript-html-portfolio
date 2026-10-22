@@ -23,14 +23,18 @@
     }
   }
 
-  require_once 'login.php';
-
-  try
-  {
-    $pdo = new PDO($attr, $user, $pass, $opts);
+  try {
+    require_once 'login.php';
+  } catch (Throwable $e) {
+    // Configuration errors can contain sensitive paths or settings; log them privately.
+    error_log('Publications database configuration failed: ' . $e->getMessage());
+    http_response_code(500);
+    exit('The database is not configured correctly. Please contact the site administrator.');
   }
-  catch (PDOException $e)
-  {
+
+  try {
+    $pdo = new PDO($attr, $user, $pass, $opts);
+  } catch (PDOException $e) {
     // Keep connection details in the server log instead of exposing them to visitors.
     error_log('Publications database connection failed: ' . $e->getMessage());
     http_response_code(500);
