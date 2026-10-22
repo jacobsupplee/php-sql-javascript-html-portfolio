@@ -143,7 +143,8 @@
     <div><label for="category">Category</label>
       <input id="category" type="text" name="category" maxlength="16" required></div>
     <div><label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
-      <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required></div>
+      <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required>
+      <small>Year 0 is not used. Enter -1 for 1 BCE or 1 for 1 CE.</small></div>
     <div><label for="isbn">ISBN</label>
       <input id="isbn" type="text" name="isbn" maxlength="13" required></div>
     <input type="submit" value="ADD RECORD">
