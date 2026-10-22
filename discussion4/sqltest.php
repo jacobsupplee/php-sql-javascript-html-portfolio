@@ -84,7 +84,7 @@
     $tooLong = false;
 
     foreach ($fieldLimits as $field => $maxLength) {
-      if (strlen($field) > $maxLength) {
+      if (strlen($$field) > $maxLength) {
         $tooLong = true;
         break;
       }
@@ -132,9 +132,19 @@
 
   $csrfToken = htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');
 
-  echo '<link rel="stylesheet" href="sqltest.css">';
   echo <<<_END
-  <form class="book-form" action="sqltest.php" method="post">
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Publications Book Manager</title>
+    <link rel="stylesheet" href="sqltest.css">
+  </head>
+  <body>
+    <main>
+      <h1>Publications Book Manager</h1>
+      <form class="book-form" action="sqltest.php" method="post">
     <input type="hidden" name="csrf_token" value="$csrfToken">
     <div><label for="author">Author</label>
       <input id="author" type="text" name="author" maxlength="128" required></div>
@@ -148,7 +158,7 @@
     <div><label for="isbn">ISBN</label>
       <input id="isbn" type="text" name="isbn" maxlength="13" required></div>
     <input type="submit" value="ADD RECORD">
-  </form>
+      </form>
 _END;
 
   if ($message !== '') {
@@ -200,4 +210,6 @@ _END;
 
     echo '</tbody></table>';
   }
+
+  echo '</main></body></html>';
 ?>
