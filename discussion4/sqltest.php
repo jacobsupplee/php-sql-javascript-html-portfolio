@@ -91,8 +91,8 @@
     }
 
     if ($author === '' || $title === '' || $category === '' || $isbn === '' ||
-        $year === false || $year < 0 || $year > 32767) {
-      $formError = 'Enter all fields and provide a whole-number year between 0 and 32767.';
+        $year === false || $year < -3000 || $year > 2100 || $year === 0) {
+      $formError = 'Enter all fields and a valid year from 3000 BCE through 2100 CE. Use negative numbers for BCE; year 0 is not valid.';
     } elseif ($tooLong) {
       $formError = 'Author and title must be 128 characters or fewer, category 16 or fewer, and ISBN 13 or fewer.';
     } else {
@@ -142,8 +142,8 @@
       <input id="title" type="text" name="title" required></div>
     <div><label for="category">Category</label>
       <input id="category" type="text" name="category" required></div>
-    <div><label for="year">Year</label>
-      <input id="year" type="number" name="year" min="0" step="1" required></div>
+    <div><label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
+      <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required></div>
     <div><label for="isbn">ISBN</label>
       <input id="isbn" type="text" name="isbn" required></div>
     <input type="submit" value="ADD RECORD">
@@ -180,7 +180,11 @@ _END;
       $author = htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8');
       $title = htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
       $category = htmlspecialchars($row->category, ENT_QUOTES, 'UTF-8');
-      $year = htmlspecialchars((string) $row->year, ENT_QUOTES, 'UTF-8');
+      $yearValue = (int) $row->year;
+      $yearLabel = $yearValue < 0
+        ? abs($yearValue) . ' BCE'
+        : $yearValue . ' CE';
+      $year = htmlspecialchars($yearLabel, ENT_QUOTES, 'UTF-8');
       $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
 
       echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
