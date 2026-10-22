@@ -28,8 +28,9 @@
       : 'No book was found with that ISBN.';
   }
 
-  if (isset($_POST['author']) || isset($_POST['title']) ||
-      isset($_POST['category']) || isset($_POST['year']) || isset($_POST['isbn']))
+  if (!isset($_POST['delete']) &&
+      (isset($_POST['author']) || isset($_POST['title']) ||
+       isset($_POST['category']) || isset($_POST['year']) || isset($_POST['isbn'])))
   {
     $author   = trim($_POST['author'] ?? '');
     $title    = trim($_POST['title'] ?? '');
