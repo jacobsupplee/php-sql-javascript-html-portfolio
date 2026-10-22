@@ -128,7 +128,7 @@ _END;
     echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES, 'UTF-8') . '</p>';
   }
 
-  $query = "SELECT author, title, category, year, isbn FROM classics";
+  $query = "SELECT author, title, category, year, isbn FROM classics ORDER BY title ASC";
   $result = $pdo->query($query);
   $books = $result->fetchAll(PDO::FETCH_OBJ);
 
