@@ -79,28 +79,26 @@ _END;
   $query  = "SELECT * FROM classics";
   $result = $pdo->query($query);
 
-  while ($row = $result->fetch(PDO::FETCH_OBJ)) //Added PDO::FETCH_OBJ, returning aeach row as an object
+  echo '<table>';
+  echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
+  echo '<th scope="col">Category</th><th scope="col">Year</th>';
+  echo '<th scope="col">ISBN</th><th scope="col">Action</th></tr></thead><tbody>';
+
+  while ($row = $result->fetch(PDO::FETCH_OBJ))
   {
-      //changed from brackets to arrows because the row is an object
-$r0 = htmlspecialchars($row->author); 
-$r1 = htmlspecialchars($row->title);
-$r2 = htmlspecialchars($row->category);
-$r3 = htmlspecialchars($row->year);
-$r4 = htmlspecialchars($row->isbn);
-    
-    echo <<<_END
-  <pre>
-    Author $r0
-     Title $r1
-  Category $r2
-      Year $r3
-      ISBN $r4
-  </pre>
-  <form action='sqltest.php' method='post'>
-  <input type='hidden' name='delete' value='yes'>
-  <input type='hidden' name='isbn' value='$r4'>
-  <input type='submit' value='DELETE RECORD'></form>
-_END;
+    $author = htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8');
+    $title = htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
+    $category = htmlspecialchars($row->category, ENT_QUOTES, 'UTF-8');
+    $year = htmlspecialchars((string) $row->year, ENT_QUOTES, 'UTF-8');
+    $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
+
+    echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
+    echo "<td>$year</td><td>$isbn</td><td>";
+    echo '<form action="sqltest.php" method="post">';
+    echo '<input type="hidden" name="delete" value="yes">';
+    echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
+    echo '<button type="submit">Delete</button></form></td></tr>';
   }
 
+  echo '</tbody></table>';
 ?>
