@@ -58,8 +58,9 @@
     }
   }
 
+  echo '<link rel="stylesheet" href="sqltest.css">';
   echo <<<_END
-  <form action="sqltest.php" method="post"><pre>
+  <form class="book-form" action="sqltest.php" method="post"><pre>
     Author <input type="text" name="author" required>
      Title <input type="text" name="title" required>
   Category <input type="text" name="category" required>
@@ -79,7 +80,7 @@ _END;
   $query  = "SELECT * FROM classics";
   $result = $pdo->query($query);
 
-  echo '<table>';
+  echo '<table class="book-table">';
   echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
   echo '<th scope="col">Category</th><th scope="col">Year</th>';
   echo '<th scope="col">ISBN</th><th scope="col">Action</th></tr></thead><tbody>';
