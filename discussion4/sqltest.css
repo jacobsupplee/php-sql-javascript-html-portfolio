@@ -18,9 +18,21 @@ body {
   max-width: 100%;
 }
 
+.table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .book-table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.book-table caption {
+  padding: 0.5rem 0;
+  font-weight: bold;
+  text-align: left;
 }
 
 .book-table th,
