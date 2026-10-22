@@ -181,7 +181,9 @@ _END;
   if (count($books) === 0) {
     echo '<p>No books have been added yet.</p>';
   } else {
+    echo '<div class="table-wrapper">';
     echo '<table class="book-table">';
+    echo '<caption>Books in the Publications database</caption>';
     echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
     echo '<th scope="col">Category</th><th scope="col">Year</th>';
     echo '<th scope="col">ISBN</th><th scope="col">Action</th></tr></thead><tbody>';
@@ -209,6 +211,7 @@ _END;
     }
 
     echo '</tbody></table>';
+    echo '</div>';
   }
 
   echo '</main></body></html>';
