@@ -15,6 +15,14 @@
     }
   }
 
+  // Form fields should be scalar values, not arrays supplied in a crafted request.
+  foreach (['author', 'title', 'category', 'year', 'isbn', 'delete'] as $field) {
+    if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+      http_response_code(400);
+      exit('Invalid form submission.');
+    }
+  }
+
   require_once 'login.php';
 
   try
