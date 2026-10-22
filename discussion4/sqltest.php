@@ -45,7 +45,7 @@
       $formError = 'Enter all fields and provide a non-negative whole-number year.';
     } else {
       // Bind form values separately so they cannot change the SQL query.
-      $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
+      $query = "INSERT INTO classics (author, title, category, year, isbn) VALUES (:author, :title, :category, :year, :isbn)";
       $statement = $pdo->prepare($query);
 
       try {
