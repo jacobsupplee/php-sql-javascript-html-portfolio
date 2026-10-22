@@ -29,8 +29,9 @@
     exit('Unable to connect to the database. Please try again later.');
   }
 
-  $message = '';
-  $formError = '';
+  $message = $_SESSION['flash_message'] ?? '';
+  $formError = $_SESSION['flash_error'] ?? '';
+  unset($_SESSION['flash_message'], $_SESSION['flash_error']);
 
   if (isset($_POST['delete']) && isset($_POST['isbn']))
   {
@@ -93,10 +94,19 @@
     }
   }
 
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $_SESSION['flash_message'] = $message;
+    $_SESSION['flash_error'] = $formError;
+    header('Location: sqltest.php');
+    exit;
+  }
+
+  $csrfToken = htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');
+
   echo '<link rel="stylesheet" href="sqltest.css">';
   echo <<<_END
   <form class="book-form" action="sqltest.php" method="post">
-    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION["csrf_token"], ENT_QUOTES, "UTF-8") ?>">
+    <input type="hidden" name="csrf_token" value="$csrfToken">
     <div><label for="author">Author</label>
       <input id="author" type="text" name="author" required></div>
     <div><label for="title">Title</label>
