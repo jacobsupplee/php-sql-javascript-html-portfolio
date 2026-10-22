@@ -20,12 +20,18 @@
   {
     // Uses a prepared statement so the ISBN is treated as a value, not SQL.
     $isbn = trim($_POST['isbn']);
-    $query = "DELETE FROM classics WHERE isbn = :isbn";
-    $statement = $pdo->prepare($query);
-    $statement->execute([':isbn' => $isbn]);
-    $message = $statement->rowCount() > 0
-      ? 'Book deleted successfully.'
-      : 'No book was found with that ISBN.';
+
+    try {
+      $query = "DELETE FROM classics WHERE isbn = :isbn";
+      $statement = $pdo->prepare($query);
+      $statement->execute([':isbn' => $isbn]);
+      $message = $statement->rowCount() > 0
+        ? 'Book deleted successfully.'
+        : 'No book was found with that ISBN.';
+    } catch (PDOException $e) {
+      error_log('Publications book deletion failed: ' . $e->getMessage());
+      $formError = 'The book could not be deleted. Please try again.';
+    }
   }
 
   if (!isset($_POST['delete']) &&
@@ -45,7 +51,9 @@
       $formError = 'Enter all fields and provide a non-negative whole-number year.';
     } else {
       // Bind form values separately so they cannot change the SQL query.
-      $query = "INSERT INTO classics (author, title, category, year, isbn) VALUES (:author, :title, :category, :year, :isbn)";
+      $query = "INSERT INTO classics
+        (author, title, category, year, isbn)
+        VALUES (:author, :title, :category, :year, :isbn)";
       $statement = $pdo->prepare($query);
 
       try {
@@ -71,14 +79,19 @@
 
   echo '<link rel="stylesheet" href="sqltest.css">';
   echo <<<_END
-  <form class="book-form" action="sqltest.php" method="post"><pre>
-    Author <input type="text" name="author" required>
-     Title <input type="text" name="title" required>
-  Category <input type="text" name="category" required>
-      Year <input type="number" name="year" min="0" step="1" required>
-      ISBN <input type="text" name="isbn" required>
-           <input type="submit" value="ADD RECORD">
-  </pre></form>
+  <form class="book-form" action="sqltest.php" method="post">
+    <div><label for="author">Author</label>
+      <input id="author" type="text" name="author" required></div>
+    <div><label for="title">Title</label>
+      <input id="title" type="text" name="title" required></div>
+    <div><label for="category">Category</label>
+      <input id="category" type="text" name="category" required></div>
+    <div><label for="year">Year</label>
+      <input id="year" type="number" name="year" min="0" step="1" required></div>
+    <div><label for="isbn">ISBN</label>
+      <input id="isbn" type="text" name="isbn" required></div>
+    <input type="submit" value="ADD RECORD">
+  </form>
 _END;
 
   if ($message !== '') {
@@ -88,29 +101,34 @@ _END;
     echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES, 'UTF-8') . '</p>';
   }
 
-  $query  = "SELECT * FROM classics";
+  $query = "SELECT author, title, category, year, isbn FROM classics";
   $result = $pdo->query($query);
+  $books = $result->fetchAll(PDO::FETCH_OBJ);
 
-  echo '<table class="book-table">';
-  echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
-  echo '<th scope="col">Category</th><th scope="col">Year</th>';
-  echo '<th scope="col">ISBN</th><th scope="col">Action</th></tr></thead><tbody>';
+  if (count($books) === 0) {
+    echo '<p>No books have been added yet.</p>';
+  } else {
+    echo '<table class="book-table">';
+    echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
+    echo '<th scope="col">Category</th><th scope="col">Year</th>';
+    echo '<th scope="col">ISBN</th><th scope="col">Action</th></tr></thead><tbody>';
 
-  while ($row = $result->fetch(PDO::FETCH_OBJ))
-  {
-    $author = htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8');
-    $title = htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
-    $category = htmlspecialchars($row->category, ENT_QUOTES, 'UTF-8');
-    $year = htmlspecialchars((string) $row->year, ENT_QUOTES, 'UTF-8');
-    $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
+    foreach ($books as $row)
+    {
+      $author = htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8');
+      $title = htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
+      $category = htmlspecialchars($row->category, ENT_QUOTES, 'UTF-8');
+      $year = htmlspecialchars((string) $row->year, ENT_QUOTES, 'UTF-8');
+      $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
 
-    echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
-    echo "<td>$year</td><td>$isbn</td><td>";
-    echo '<form action="sqltest.php" method="post">';
-    echo '<input type="hidden" name="delete" value="yes">';
-    echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
-    echo '<button type="submit">Delete</button></form></td></tr>';
+      echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
+      echo "<td>$year</td><td>$isbn</td><td>";
+      echo '<form action="sqltest.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
+      echo '<input type="hidden" name="delete" value="yes">';
+      echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
+      echo '<button type="submit">Delete</button></form></td></tr>';
+    }
+
+    echo '</tbody></table>';
   }
-
-  echo '</tbody></table>';
 ?>
