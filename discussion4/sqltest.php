@@ -1,4 +1,20 @@
 <?php // sqltest.php
+  session_start();
+
+  if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+  }
+
+  // Reject state-changing requests without a valid session token.
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $submittedToken = $_POST['csrf_token'] ?? '';
+    if (!is_string($submittedToken) ||
+        !hash_equals($_SESSION['csrf_token'], $submittedToken)) {
+      http_response_code(403);
+      exit('Invalid request. Please refresh the page and try again.');
+    }
+  }
+
   require_once 'login.php';
 
   try
@@ -80,6 +96,7 @@
   echo '<link rel="stylesheet" href="sqltest.css">';
   echo <<<_END
   <form class="book-form" action="sqltest.php" method="post">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION["csrf_token"], ENT_QUOTES, "UTF-8") ?>">
     <div><label for="author">Author</label>
       <input id="author" type="text" name="author" required></div>
     <div><label for="title">Title</label>
@@ -124,6 +141,8 @@ _END;
       echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
       echo "<td>$year</td><td>$isbn</td><td>";
       echo '<form action="sqltest.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
+      echo '<input type="hidden" name="csrf_token" value="' .
+        htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
       echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
       echo '<button type="submit">Delete</button></form></td></tr>';
