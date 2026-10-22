@@ -47,14 +47,25 @@
       // Bind form values separately so they cannot change the SQL query.
       $query = "INSERT INTO classics VALUES (:author, :title, :category, :year, :isbn)";
       $statement = $pdo->prepare($query);
-      $statement->execute([
-        ':author'   => $author,
-        ':title'    => $title,
-        ':category' => $category,
-        ':year'     => $year,
-        ':isbn'     => $isbn
-      ]);
-      $message = 'Book added successfully.';
+
+      try {
+        $statement->execute([
+          ':author'   => $author,
+          ':title'    => $title,
+          ':category' => $category,
+          ':year'     => $year,
+          ':isbn'     => $isbn
+        ]);
+        $message = 'Book added successfully.';
+      } catch (PDOException $e) {
+        // MySQL error 1062 means a unique value, such as the ISBN, already exists.
+        if (($e->errorInfo[1] ?? null) === 1062) {
+          $formError = 'A book with that ISBN already exists.';
+        } else {
+          error_log('Publications book insertion failed: ' . $e->getMessage());
+          $formError = 'The book could not be added. Please try again.';
+        }
+      }
     }
   }
 
