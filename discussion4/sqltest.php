@@ -75,6 +75,12 @@
 
     // Validate submitted values against the classics table's column limits.
     $year = filter_var($yearInput, FILTER_VALIDATE_INT);
+    $fieldValues = [
+      'author' => $author,
+      'title' => $title,
+      'category' => $category,
+      'isbn' => $isbn,
+    ];
     $fieldLimits = [
       'author' => 128,
       'title' => 128,
@@ -84,7 +90,7 @@
     $tooLong = false;
 
     foreach ($fieldLimits as $field => $maxLength) {
-      if (strlen($$field) > $maxLength) {
+      if (strlen($fieldValues[$field]) > $maxLength) {
         $tooLong = true;
         break;
       }
