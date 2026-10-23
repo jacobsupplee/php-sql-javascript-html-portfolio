@@ -25,26 +25,42 @@
 
         <section>
             <h2>Course Information</h2>
+            <div id="course-count"></div>
+            <div id="course-list"></div>
+            <p id="total-credits"></p>
+            <p id="cmsc115-result"></p>
 
             <script>
-                //Defines the Course class
+                // Defines the Course class.
                 class Course {
                     constructor(courseCode, courseTitle, creditHours) {
                         this.courseCode = courseCode;
                         this.courseTitle = courseTitle;
                         this.creditHours = creditHours;
-                     }
+                    }
 
-                 //Print course information
-                    printCourse() {
-                        document.write("Course Code = " + this.courseCode + "<br>");
-                        document.write("Course Title = " + this.courseTitle + "<br>");
-                        document.write("Credit Hours = " + this.creditHours + "<br><br>");
-                        }
+                    // Adds this course's information to the page.
+                    renderCourse(container, courseNumber) {
+                        const courseHeading = document.createElement("h3");
+                        courseHeading.textContent = "Course " + courseNumber + " Information";
+                        container.appendChild(courseHeading);
+
+                        const courseCode = document.createElement("p");
+                        courseCode.textContent = "Course Code: " + this.courseCode;
+                        container.appendChild(courseCode);
+
+                        const courseTitle = document.createElement("p");
+                        courseTitle.textContent = "Course Title: " + this.courseTitle;
+                        container.appendChild(courseTitle);
+
+                        const creditHours = document.createElement("p");
+                        creditHours.textContent = "Credit Hours: " + this.creditHours;
+                        container.appendChild(creditHours);
+                    }
                 }
 
-                //Create array of course objects
-                let arrayOfCourseObjects = [
+                // Create an array of course objects.
+                const arrayOfCourseObjects = [
                     new Course("CSC 223", "Data Structures & Analysis Of Algorithms", 4),
                     new Course("CSC 222", "Object-Oriented Programming", 4),
                     new Course("MTH 264", "Calculus II", 4),
@@ -58,31 +74,35 @@
                     new Course("PACE 111T", "Programming & Career Exploration In Technology", 3)
                 ];
 
-                //Display number of courses
-                document.write("The number of UMGC/NOVA courses I took over the last 3 terms = " 
-                    + arrayOfCourseObjects.length + "<br><br>");
-                
-                //Display Course information
+                // Display the number of courses without document.write().
+                const courseCount = document.createElement("p");
+                courseCount.textContent =
+                    "The number of UMGC/NOVA courses I took over the last 3 terms = " +
+                    arrayOfCourseObjects.length;
+                document.getElementById("course-count").appendChild(courseCount);
+
+                // Render each course into the course list.
+                const courseList = document.getElementById("course-list");
                 for (let i = 0; i < arrayOfCourseObjects.length; i++) {
-                    document.write("Course " + (i + 1) + " Information:<br>");
-                    arrayOfCourseObjects[i].printCourse();
+                    arrayOfCourseObjects[i].renderCourse(courseList, i + 1);
                 }
 
-                //Check for CMSC 115
-                let cmsc115Taken = false;
+                // Calculate total credit hours from the course objects.
+                const totalCreditHours = arrayOfCourseObjects.reduce(
+                    (total, course) => total + course.creditHours,
+                    0
+                );
+                document.getElementById("total-credits").textContent =
+                    "Total credit hours: " + totalCreditHours;
 
-                for (let i = 0; i < arrayOfCourseObjects.length; i++) {
-                    if (arrayOfCourseObjects[i].courseCode === "CMSC 115") {
-                        cmsc115Taken = true;
-                    }
-                }
+                // Check whether any course has the code CMSC 115.
+                const cmsc115Taken = arrayOfCourseObjects.some(
+                    course => course.courseCode === "CMSC 115"
+                );
 
-                if (cmsc115Taken) {
-                    document.write("Yes, I have taken the CMSC 115 course.");
-                }
-                else {
-                    document.write("No, I have not taken the CMSC 115 course.");
-                }
+                document.getElementById("cmsc115-result").textContent = cmsc115Taken
+                    ? "Yes, I have taken the CMSC 115 course."
+                    : "No, I have not taken the CMSC 115 course.";
             </script>
 
         </section>
