@@ -8,5 +8,9 @@ favicon.ico
 
 # VS Code files
 .vscode/
+
 # Local database credentials
 /config.local.php
+
+# Local HTTP authentication demo credentials
+/discussion5/auth.local.php
