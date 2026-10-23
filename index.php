@@ -13,6 +13,7 @@
             <p>PHP, JavaScript, MySQL, and practical web application development</p>
         </header>
 
+        <div class="portfolio-project-grid">
         <section>
             <h2>PHP & Object-Oriented Programming</h2>
             <ul>
@@ -48,6 +49,8 @@
                 <li><a href="web-form-validation/server-validation.php">Server-Side Form Validation</a></li>
             </ul>
         </section>
+
+        </div>
 
         <footer>Selected projects originally developed during UMGC CMSC 340 · Web Programming</footer>
     </main>
