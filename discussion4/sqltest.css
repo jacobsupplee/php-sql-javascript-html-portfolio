@@ -27,6 +27,13 @@ body {
   padding: 0.5rem;
 }
 
+.book-form input:not([type="hidden"]):focus-visible,
+button:focus-visible,
+input[type="submit"]:focus-visible {
+  outline: 3px solid #2457c5;
+  outline-offset: 2px;
+}
+
 .table-wrapper {
   max-width: 100%;
   overflow-x: auto;
