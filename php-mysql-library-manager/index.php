@@ -246,12 +246,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Publications Book Manager</title>
+    <title>Publications Library Manager</title>
     <link rel="stylesheet" href="library-manager.css">
   </head>
   <body>
     <main>
-      <h1>Publications Book Manager</h1>
+      <h1>Publications Library Manager</h1>
       <p class="page-intro">Add a book to the Publications database or manage existing records.</p>
       <form class="search-form" action="index.php" method="get" role="search">
         <label for="book-search">Search books</label>
