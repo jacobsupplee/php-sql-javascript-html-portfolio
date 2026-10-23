@@ -1,13 +1,23 @@
 <?php
 // CMSC 340: PHP PDO MyCourses Table
-// Jacob Supplee
-// Uses local database settings stored in config.local.php
+// Uses local database settings stored in config.local.php.
 
-//Loads the connection settings for the CMSC 340 database
+session_start();
+
+// Create a token that helps protect the form against cross-site request forgery.
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+function escapeHtml($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+// Load the local database connection settings.
 $config = require __DIR__ . '/../config.local.php';
 $database = $config['cmsc340'];
 
-//Stores the database connection information
 $host = $database['host'];
 $port = $database['port'];
 $dbName = $database['database'];
@@ -15,71 +25,93 @@ $username = $database['username'];
 $password = $database['password'];
 
 try {
-    //Creates the PDO connection to the CMSC 340 database
     $pdo = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbName;charset=utf8mb4",
         $username,
         $password,
         [
-            //Enables error handling and associative array results
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ]
     );
 } catch (PDOException $e) {
-    //Log details for troubleshooting; show them only during local development.
     error_log('CMSC 340 database connection failed: ' . $e->getMessage());
     http_response_code(500);
 
     $serverName = $_SERVER['SERVER_NAME'] ?? '';
     if (in_array($serverName, ['localhost', '127.0.0.1'], true)) {
         exit('Local database connection failed: ' .
-            htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
+            escapeHtml($e->getMessage()));
     }
 
     exit('Database connection failed. Check your local database configuration.');
 }
 
-//Adds a course when the form is submitted
-if (isset($_POST['add_course'])) {
-    //Trims extra spaces and reads the submitted form values
-    $courseCode = trim($_POST['course_code'] ?? '');
-    $courseTitle = trim($_POST['course_title'] ?? '');
-    $creditHoursInput = $_POST['course_credit_hours'] ?? '';
+$formError = '';
+$courseCode = '';
+$courseTitle = '';
+$creditHoursInput = '';
 
-    //Checks that credit hours are entered as a whole number
-    $creditHours = filter_var($creditHoursInput, FILTER_VALIDATE_INT);
+// Show a one-time message saved before a successful redirect.
+$statusMessage = $_SESSION['course_status'] ?? '';
+unset($_SESSION['course_status']);
 
-    //Validates all fields before inserting a new course
-    if ($courseCode !== '' && $courseTitle !== '' &&
-        $creditHours !== false && $creditHours > 0) {
+// Process the form only when it is submitted using POST.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
+    $submittedToken = $_POST['csrf_token'] ?? '';
 
-        //Uses placeholders so submitted values are not treated as SQL code
-        $sql = "INSERT INTO mycourses
-                (course_code, course_title, course_credit_hours)
-                VALUES (:course_code, :course_title, :course_credit_hours)";
-        $statement = $pdo->prepare($sql);
-
-        //Executes the insert with the values from the form
-        $statement->execute([
-            ':course_code' => $courseCode,
-            ':course_title' => $courseTitle,
-            ':course_credit_hours' => $creditHours,
-        ]);
+    if (!is_string($submittedToken) ||
+        !hash_equals($_SESSION['csrf_token'], $submittedToken)) {
+        $formError = 'Your form session expired or could not be verified. Please try again.';
     } else {
-        //Displays a validation message if any field is invalid
-        $formError = 'Enter a course code, course title, and positive whole-number credit hours.';
+        $courseCode = trim(is_string($_POST['course_code'] ?? null) ? $_POST['course_code'] : '');
+        $courseTitle = trim(is_string($_POST['course_title'] ?? null) ? $_POST['course_title'] : '');
+        $creditHoursInput = is_string($_POST['course_credit_hours'] ?? null)
+            ? $_POST['course_credit_hours']
+            : '';
+
+        $creditHours = filter_var($creditHoursInput, FILTER_VALIDATE_INT);
+
+        // Validate input on the server; browser-side rules can be bypassed.
+        if ($courseCode === '' || strlen($courseCode) > 20) {
+            $formError = 'Enter a course code that is no more than 20 characters.';
+        } elseif ($courseTitle === '' || strlen($courseTitle) > 120) {
+            $formError = 'Enter a course title that is no more than 120 characters.';
+        } elseif ($creditHours === false || $creditHours < 1 || $creditHours > 10) {
+            $formError = 'Credit hours must be a whole number from 1 to 10.';
+        } else {
+            try {
+                $sql = "INSERT INTO mycourses
+                        (course_code, course_title, course_credit_hours)
+                        VALUES (:course_code, :course_title, :course_credit_hours)";
+                $statement = $pdo->prepare($sql);
+                $statement->execute([
+                    ':course_code' => $courseCode,
+                    ':course_title' => $courseTitle,
+                    ':course_credit_hours' => $creditHours,
+                ]);
+
+                $_SESSION['course_status'] = 'Course added successfully.';
+                header('Location: ' . $_SERVER['PHP_SELF']);
+                exit;
+            } catch (PDOException $e) {
+                error_log('CMSC 340 course insert failed: ' . $e->getMessage());
+                $formError = 'The course could not be added. Check the details and try again.';
+            }
+        }
     }
 }
 
-//Retrieves the course records to display in the table
+// Retrieve courses in a consistent order.
 $statement = $pdo->query(
-    "SELECT course_code, course_title, course_credit_hours FROM mycourses"
+    "SELECT course_code, course_title, course_credit_hours
+     FROM mycourses
+     ORDER BY course_code ASC"
 );
 $courses = $statement->fetchAll();
 
-//Calculates the total credit hours across the retrieved courses
+// Calculate the total credit hours from the database results.
 $totalCreditHours = 0;
 foreach ($courses as $course) {
     $totalCreditHours += (int) $course['course_credit_hours'];
@@ -91,65 +123,114 @@ foreach ($courses as $course) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My UMGC Courses</title>
+    <link rel="stylesheet" href="../design.css">
 </head>
 <body>
-<h1>My UMGC Courses</h1>
+    <main class="container coursework-page assignment-four">
+        <header>
+            <h1>My UMGC Courses</h1>
+            <p>Add a course and review the courses stored in the database.</p>
+        </header>
 
-<?php
-//Shows the validation message when submitted form data is invalid
-if (!empty($formError)):
-?>
-    <p role="alert"><?php echo htmlspecialchars($formError, ENT_QUOTES, 'UTF-8'); ?></p>
-<?php endif; ?>
+        <?php if ($statusMessage !== ''): ?>
+            <p class="assignment-four-message success" role="status">
+                <?= escapeHtml($statusMessage) ?>
+            </p>
+        <?php endif; ?>
 
-<!-- Form for entering a new course -->
-<form method="post">
-    <label for="course_code">Course Code:</label>
-    <input type="text" id="course_code" name="course_code" required>
+        <?php if ($formError !== ''): ?>
+            <p class="assignment-four-message error" role="alert">
+                <?= escapeHtml($formError) ?>
+            </p>
+        <?php endif; ?>
 
-    <br><br>
+        <section>
+            <h2>Add a Course</h2>
+            <form class="assignment-four-form" method="post">
+                <input type="hidden" name="csrf_token" value="<?= escapeHtml($_SESSION['csrf_token']) ?>">
 
-    <label for="course_title">Course Title:</label>
-    <input type="text" id="course_title" name="course_title" required>
+                <div class="assignment-four-field">
+                    <label for="course_code">Course code</label>
+                    <input
+                        type="text"
+                        id="course_code"
+                        name="course_code"
+                        maxlength="20"
+                        value="<?= escapeHtml($courseCode) ?>"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
 
-    <br><br>
+                <div class="assignment-four-field">
+                    <label for="course_title">Course title</label>
+                    <input
+                        type="text"
+                        id="course_title"
+                        name="course_title"
+                        maxlength="120"
+                        value="<?= escapeHtml($courseTitle) ?>"
+                        required
+                    >
+                </div>
 
-    <label for="course_credit_hours">Course Credit Hours:</label>
-    <input type="number" id="course_credit_hours" name="course_credit_hours"
-           min="1" step="1" required>
+                <div class="assignment-four-field">
+                    <label for="course_credit_hours">Credit hours</label>
+                    <input
+                        type="number"
+                        id="course_credit_hours"
+                        name="course_credit_hours"
+                        min="1"
+                        max="10"
+                        step="1"
+                        value="<?= escapeHtml($creditHoursInput) ?>"
+                        required
+                    >
+                </div>
 
-    <br><br>
+                <button type="submit" name="add_course" value="1">Add Course</button>
+            </form>
+        </section>
 
-    <button type="submit" name="add_course" value="1">Add Course</button>
-</form>
+        <section>
+            <h2>Course List</h2>
+            <p class="assignment-four-count">
+                <?= count($courses) ?> <?= count($courses) === 1 ? 'course' : 'courses' ?> in the database
+            </p>
 
-<h2>My Courses</h2>
+            <?php if ($courses === []): ?>
+                <p class="assignment-four-empty">No courses have been added yet.</p>
+            <?php else: ?>
+                <div class="assignment-four-table-wrap">
+                    <table class="assignment-four-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Course Code</th>
+                                <th scope="col">Course Title</th>
+                                <th scope="col">Credit Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($courses as $course): ?>
+                                <tr>
+                                    <td><?= escapeHtml($course['course_code']) ?></td>
+                                    <td><?= escapeHtml($course['course_title']) ?></td>
+                                    <td><?= (int) $course['course_credit_hours'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th scope="row" colspan="2">Total credit hours</th>
+                                <td><?= $totalCreditHours ?></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </section>
 
-<!-- Displays the courses returned by the database query -->
-<table border="1">
-    <thead>
-        <tr>
-            <th>Course Code</th>
-            <th>Course Title</th>
-            <th>Course Credit Hours</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($courses as $course): ?>
-        <tr>
-            <!-- Escapes text before displaying it in the page -->
-            <td><?php echo htmlspecialchars($course['course_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?php echo htmlspecialchars($course['course_title'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?php echo (int) $course['course_credit_hours']; ?></td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-
-<!-- Displays the total credit hours calculated above -->
-<p>
-    Total credit hours of my UMGC courses over the last 3 terms =
-    <?php echo $totalCreditHours; ?>
-</p>
+        <footer>CMSC 340 · Web Programming</footer>
+    </main>
 </body>
 </html>
