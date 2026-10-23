@@ -158,14 +158,14 @@ if ($submitted) {
             width: 100%;
             min-height: 2.75rem;
             padding: 0.65rem 0.75rem;
-            border: 1px solid #b9b3c2;
+            border: 1px solid #cfc5d9;
             border-radius: 0.5rem;
             font: inherit;
         }
 
         .signup-panel input:focus-visible,
         .signup-panel button:focus-visible {
-            outline: 3px solid #2764c5;
+            outline: 3px solid #a9bfd8;
             outline-offset: 2px;
         }
 
@@ -180,17 +180,17 @@ if ($submitted) {
         .signup-panel button {
             min-height: 2.75rem;
             padding: 0.65rem 1rem;
-            border: 1px solid #667f7b;
+            border: 1px solid #6f6884;
             border-radius: 0.5rem;
             color: white;
-            background: #667f7b;
+            background: #6f6884;
             font: inherit;
             font-weight: 700;
             cursor: pointer;
         }
 
         .signup-panel button:hover {
-            background: #526a66;
+            background: #5c5577;
         }
 
         .signup-panel .notice {
