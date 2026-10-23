@@ -18,11 +18,19 @@ function validate(form) {
 }
 
 function validateForename(field) {
-    return field.trim() === "" ? "Enter your first name." : "";
+    const forename = field.trim();
+
+    if (forename === "") return "Enter your first name.";
+    if (forename.length > 32) return "First names must be 32 characters or fewer.";
+    return "";
 }
 
 function validateSurname(field) {
-    return field.trim() === "" ? "Enter your last name." : "";
+    const surname = field.trim();
+
+    if (surname === "") return "Enter your last name.";
+    if (surname.length > 32) return "Last names must be 32 characters or fewer.";
+    return "";
 }
 
 function validateUsername(field) {
@@ -31,8 +39,8 @@ function validateUsername(field) {
     if (username === "") {
         return "Enter a username.";
     }
-    if (username.length < 5) {
-        return "Usernames must be at least 5 characters.";
+    if (username.length < 5 || username.length > 16) {
+        return "Usernames must be between 5 and 16 characters.";
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
         return "Usernames may contain only letters, numbers, hyphens, and underscores.";
@@ -78,7 +86,7 @@ function validateAge(field) {
 function validateEmail(field) {
     const email = field.trim();
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return "Enter a valid email address.";
     }
 
