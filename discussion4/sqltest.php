@@ -53,21 +53,26 @@
   $formError = $_SESSION['flash_error'] ?? '';
   unset($_SESSION['flash_message'], $_SESSION['flash_error']);
 
-  if (isset($_POST['delete']) && isset($_POST['isbn']))
-  {
-    // Uses a prepared statement so the ISBN is treated as a value, not SQL.
-    $isbn = trim($_POST['isbn']);
+  if (isset($_POST['delete'])) {
+    $isbn = trim($_POST['isbn'] ?? '');
 
-    try {
-      $query = "DELETE FROM classics WHERE isbn = :isbn";
-      $statement = $pdo->prepare($query);
-      $statement->execute([':isbn' => $isbn]);
-      $message = $statement->rowCount() > 0
-        ? 'Book deleted successfully.'
-        : 'No book was found with that ISBN.';
-    } catch (PDOException $e) {
-      error_log('Publications book deletion failed: ' . $e->getMessage());
-      $formError = 'The book could not be deleted. Please try again.';
+    // Accept only the expected delete action and a stored ISBN format.
+    if ($_POST['delete'] !== 'yes' ||
+        !preg_match('/^(?:[0-9]{9}[0-9X]|[0-9]{13})$/', $isbn)) {
+      $formError = 'Invalid delete request. Refresh the page and try again.';
+    } else {
+      // Uses a prepared statement so the ISBN is treated as a value, not SQL.
+      try {
+        $query = "DELETE FROM classics WHERE isbn = :isbn";
+        $statement = $pdo->prepare($query);
+        $statement->execute([':isbn' => $isbn]);
+        $message = $statement->rowCount() > 0
+          ? 'Book deleted successfully.'
+          : 'No book was found with that ISBN.';
+      } catch (PDOException $e) {
+        error_log('Publications book deletion failed: ' . $e->getMessage());
+        $formError = 'The book could not be deleted. Please try again.';
+      }
     }
   }
 
