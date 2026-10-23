@@ -16,7 +16,7 @@
 
         <main>
             <section>
-                <h2>JavaScript Object (Associative Array)</h2>
+                <h2>JavaScript Object (Key-Value Pairs)</h2>
                 <p class="section-intro">
                     Each course code is a property, and its value is the number of credit hours.
                 </p>
