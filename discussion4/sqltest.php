@@ -235,19 +235,38 @@ _END;
     echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>';
   }
 
+  // Limit each result page so the manager remains responsive as the table grows.
+  $booksPerPage = 25;
+  $requestedPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
+  $currentPage = $requestedPage === false || $requestedPage === null
+    ? 1
+    : max(1, $requestedPage);
+
   try {
-    $query = "SELECT author, title, category, year, isbn FROM classics ORDER BY title ASC";
-    $result = $pdo->query($query);
-    $books = $result->fetchAll(PDO::FETCH_OBJ);
+    $totalBooks = (int) $pdo->query("SELECT COUNT(*) FROM classics")->fetchColumn();
+    $totalPages = max(1, (int) ceil($totalBooks / $booksPerPage));
+    $currentPage = min($currentPage, $totalPages);
+    $offset = ($currentPage - 1) * $booksPerPage;
+
+    $query = "SELECT author, title, category, year, isbn
+      FROM classics ORDER BY title ASC, isbn ASC
+      LIMIT :limit OFFSET :offset";
+    $statement = $pdo->prepare($query);
+    $statement->bindValue(':limit', $booksPerPage, PDO::PARAM_INT);
+    $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $statement->execute();
+    $books = $statement->fetchAll(PDO::FETCH_OBJ);
   } catch (PDOException $e) {
     error_log('Publications book list query failed: ' . $e->getMessage());
     http_response_code(500);
     exit('Unable to load the book list. Please try again later.');
   }
 
-  if (count($books) === 0) {
+  if ($totalBooks === 0) {
     echo '<p>No books have been added yet.</p>';
   } else {
+    echo '<p>Showing ' . ($offset + 1) . '–' .
+      min($offset + $booksPerPage, $totalBooks) . ' of ' . $totalBooks . ' books.</p>';
     echo '<div class="table-wrapper" role="region" aria-label="Scrollable book list" tabindex="0">';
     echo '<table class="book-table">';
     echo '<caption>Books in the Publications database</caption>';
@@ -282,6 +301,22 @@ _END;
 
     echo '</tbody></table>';
     echo '</div>';
+
+    if ($totalPages > 1) {
+      echo '<nav class="pagination" aria-label="Book list pages">';
+
+      if ($currentPage > 1) {
+        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . '">Previous</a>';
+      }
+
+      echo '<span aria-current="page">Page ' . $currentPage . ' of ' . $totalPages . '</span>';
+
+      if ($currentPage < $totalPages) {
+        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . '">Next</a>';
+      }
+
+      echo '</nav>';
+    }
   }
 
   echo '</main></body></html>';
