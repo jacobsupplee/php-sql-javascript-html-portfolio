@@ -2,12 +2,9 @@
 $name = "Jacob Supplee";
 $city = "Rockville";
 $state = "Maryland";
-
-// Sample value for the assignment; this is not live weather data.
 $temperature = 75;
 $currentDate = date("F j, Y");
 
-// Approximate Earth's mean radius and the volume of a sphere.
 $pi = M_PI;
 $earthRadius = 3959; // miles
 $earthVolume = (4 / 3) * $pi * ($earthRadius ** 3);
@@ -38,8 +35,8 @@ function escapeHtml($value)
                 <div><dt>Name</dt><dd><?= escapeHtml($name) ?></dd></div>
                 <div><dt>City</dt><dd><?= escapeHtml($city) ?></dd></div>
                 <div><dt>State</dt><dd><?= escapeHtml($state) ?></dd></div>
-                <div><dt>Example temperature</dt><dd><?= (int) $temperature ?>°F <span class="section-intro">(sample value, not live weather)</span></dd></div>
-                <div><dt>Date generated</dt><dd><?= escapeHtml($currentDate) ?></dd></div>
+                <div><dt>Temperature</dt><dd><?= (int) $temperature ?>°F</dd></div>
+                <div><dt>Date</dt><dd><?= escapeHtml($currentDate) ?></dd></div>
             </dl>
         </section>
 
@@ -47,7 +44,7 @@ function escapeHtml($value)
             <h2>Earth's Volume</h2>
             <p class="calculation-label">Volume of a sphere</p>
             <p class="formula">V = (4 / 3) × π × r³</p>
-            <p class="section-intro">Earth is not a perfect sphere, so this is an estimate using its approximate mean radius.</p>
+            <p class="section-intro">This is an approximate value, since Earth isn't a perfect sphere.</p>
             <div class="calculation-result">
                 <span>Radius used</span>
                 <strong><?= number_format($earthRadius) ?> miles</strong>
@@ -56,7 +53,6 @@ function escapeHtml($value)
                 <span>Calculated volume</span>
                 <strong><?= number_format($earthVolume, 2) ?> cubic miles</strong>
             </div>
-            <p class="section-intro">The calculation uses PHP's built-in M_PI constant and the formula for the volume of a sphere.</p>
         </section>
 
         <footer>CMSC 340 · Web Programming</footer>
