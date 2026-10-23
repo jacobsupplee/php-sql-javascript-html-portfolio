@@ -1,13 +1,14 @@
 # Web Development Portfolio
 
-A collection of projects built with PHP, JavaScript, HTML, CSS, and MySQL.
+This repo contains web projects I've built while studying Computer Science at UMGC. It includes a mix of PHP, JavaScript, and database work.
 
-## Projects
+## Featured Projects
 
-- **PHP & Object-Oriented Programming** — profile objects, course collections, and a calculator.
-- **JavaScript Applications** — course data, interactive registration, and form validation.
-- **Database Applications** — a publications manager and a course database.
-- **Web Security** — authentication and server-side form validation.
+- **[Publications Library Manager](php-mysql-library-manager/)** — A PHP and MySQL app for adding, searching, and managing book records.
+- **[Interactive Course Registration](javascript-course-registration/)** — A JavaScript app for selecting courses, preventing duplicates, and keeping track of credit totals.
+- **[PDO Course Database](php-pdo-course-database/)** — A PHP app that uses PDO to add and display course records.
+
+The [portfolio homepage](index.php) has links to the rest of the projects, including form validation and object-oriented programming examples.
 
 ## Built With
 
@@ -15,4 +16,4 @@ PHP, JavaScript, HTML, CSS, MySQL, and Apache.
 
 ## Running Locally
 
-These projects are intended to run in a local web server environment with PHP support, such as AMPPS. Some examples also require MySQL and local database configuration. See the example configuration files before running database or authentication projects.
+The projects are set up to run locally with a PHP-enabled server, such as AMPPS. Some projects need a MySQL database and local configuration. Check the example configuration files before running them, and don't commit real credentials.
