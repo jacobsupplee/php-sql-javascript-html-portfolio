@@ -239,6 +239,7 @@
   <body>
     <main>
       <h1>Publications Book Manager</h1>
+      <p class="page-intro">Add a book to the Publications database or manage existing records.</p>
       <form class="book-form" action="sqltest.php" method="post">
         <input type="hidden" name="csrf_token" value="$csrfToken">
         <div class="form-field">
@@ -300,9 +301,9 @@ _END;
   }
 
   if ($totalBooks === 0) {
-    echo '<p>No books have been added yet.</p>';
+    echo '<p class="empty-state">No books have been added yet. Use the form above to add the first record.</p>';
   } else {
-    echo '<p>Showing ' . ($offset + 1) . '–' .
+    echo '<p class="table-summary">Showing ' . ($offset + 1) . '–' .
       min($offset + $booksPerPage, $totalBooks) . ' of ' . $totalBooks . ' books.</p>';
     echo '<div class="table-wrapper" role="region" aria-label="Scrollable book list" tabindex="0">';
     echo '<table class="book-table">';
