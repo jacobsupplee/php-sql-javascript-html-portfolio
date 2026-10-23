@@ -32,6 +32,20 @@
     </div>
 
     <script>
+        // Reusable functions keep the rendering code consistent.
+        function addCourseRow(container, courseCode, creditHours) {
+            const courseRow = document.createElement("p");
+            courseRow.textContent = courseCode + " : " + creditHours;
+            container.appendChild(courseRow);
+        }
+
+        function addCreditTotal(container, total) {
+            const totalRow = document.createElement("p");
+            totalRow.textContent =
+                "Total credit hours over the last 3 terms = " + total;
+            container.appendChild(totalRow);
+        }
+
         // Each course code is a property; its credit hours are the value.
         const courses = {
             "CSC223": 4,
@@ -47,23 +61,16 @@
             "PACE111T": 3
         };
 
-        // Find each section once, then add elements to it.
         const associativeArraySection = document.getElementById("associativeArray");
         let totalCredits = 0;
 
         // for...in loops through an object's property names.
         for (const courseCode in courses) {
-            const courseRow = document.createElement("p");
-            courseRow.textContent = courseCode + " : " + courses[courseCode];
-            associativeArraySection.appendChild(courseRow);
-
+            addCourseRow(associativeArraySection, courseCode, courses[courseCode]);
             totalCredits += courses[courseCode];
         }
 
-        const associativeTotal = document.createElement("p");
-        associativeTotal.textContent =
-            "Total credit hours over the last 3 terms = " + totalCredits;
-        associativeArraySection.appendChild(associativeTotal);
+        addCreditTotal(associativeArraySection, totalCredits);
 
         // A Course object stores a course code and its credit hours together.
         class Course {
@@ -93,17 +100,11 @@
 
         // for...of loops through the array's values (each value is a Course object).
         for (const course of courseObjArray) {
-            const courseRow = document.createElement("p");
-            courseRow.textContent = course.courseCode + " : " + course.creditHours;
-            courseObjectsSection.appendChild(courseRow);
-
+            addCourseRow(courseObjectsSection, course.courseCode, course.creditHours);
             totalObjCredits += course.creditHours;
         }
 
-        const objectsTotal = document.createElement("p");
-        objectsTotal.textContent =
-            "Total credit hours over the last 3 terms = " + totalObjCredits;
-        courseObjectsSection.appendChild(objectsTotal);
+        addCreditTotal(courseObjectsSection, totalObjCredits);
     </script>
 </body>
 </html>
