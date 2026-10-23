@@ -8,21 +8,27 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container coursework-page discussion-six">
         <header>
             <h1>Discussion 6: JavaScript Arrays</h1>
-            <p>Storing and Retrieving Course Information</p>
+            <p>Comparing an object with an array of course objects</p>
         </header>
 
         <main>
             <section>
                 <h2>JavaScript Object (Associative Array)</h2>
-                <div id="associativeArray"></div>
+                <p class="section-intro">
+                    Each course code is a property, and its value is the number of credit hours.
+                </p>
+                <div id="associativeArray" class="course-list"></div>
             </section>
 
             <section>
                 <h2>JavaScript Array of Course Objects</h2>
-                <div id="courseObjects"></div>
+                <p class="section-intro">
+                    Each array entry is a Course object with its own course code and credit hours.
+                </p>
+                <div id="courseObjects" class="course-list"></div>
             </section>
         </main>
 
@@ -32,18 +38,36 @@
     </div>
 
     <script>
-        // Reusable functions keep the rendering code consistent.
+        // Reusable function to display one course as a styled row.
         function addCourseRow(container, courseCode, creditHours) {
-            const courseRow = document.createElement("p");
-            courseRow.textContent = courseCode + " : " + creditHours;
+            const courseRow = document.createElement("div");
+            courseRow.className = "course-row";
+
+            const codeLabel = document.createElement("span");
+            codeLabel.className = "course-code";
+            codeLabel.textContent = courseCode;
+
+            const creditsLabel = document.createElement("span");
+            creditsLabel.className = "credit-value";
+            creditsLabel.textContent = creditHours + " credits";
+
+            courseRow.append(codeLabel, creditsLabel);
             container.appendChild(courseRow);
         }
 
+        // Reusable function to display a styled total.
         function addCreditTotal(container, total) {
             const totalRow = document.createElement("p");
-            totalRow.textContent =
-                "Total credit hours over the last 3 terms = " + total;
-            container.appendChild(totalRow);
+            totalRow.className = "credit-total";
+
+            const label = document.createElement("span");
+            label.textContent = "Total credit hours";
+
+            const value = document.createElement("strong");
+            value.textContent = total + " credits";
+
+            totalRow.append(label, value);
+            container.after(totalRow);
         }
 
         // Each course code is a property; its credit hours are the value.
@@ -98,7 +122,7 @@
         const courseObjectsSection = document.getElementById("courseObjects");
         let totalObjCredits = 0;
 
-        // for...of loops through the array's values (each value is a Course object).
+        // for...of loops through array values; each value here is a Course object.
         for (const course of courseObjArray) {
             addCourseRow(courseObjectsSection, course.courseCode, course.creditHours);
             totalObjCredits += course.creditHours;
