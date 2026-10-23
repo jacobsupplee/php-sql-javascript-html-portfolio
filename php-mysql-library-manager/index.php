@@ -374,6 +374,7 @@ _END;
 
       echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
       echo "<td>$year</td><td>$isbn</td><td>";
+      echo '<a class="edit-link" href="edit.php?isbn=' . rawurlencode($row->isbn) . '&return_page=' . $currentPage . $searchQuery . '">Edit</a> ';
       echo '<form action="index.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
       echo '<input type="hidden" name="csrf_token" value="' .
         htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
