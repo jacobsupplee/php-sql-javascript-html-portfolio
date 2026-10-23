@@ -62,6 +62,33 @@ input[type="submit"]:focus-visible {
   -webkit-overflow-scrolling: touch;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #777;
+  border-radius: 0.2rem;
+  color: #174ea6;
+  text-decoration: none;
+}
+
+.pagination a:hover {
+  background: #f1f3f5;
+  text-decoration: underline;
+}
+
+.pagination a:focus-visible {
+  outline: 3px solid #2457c5;
+  outline-offset: 2px;
+}
+
 .book-table {
   width: 100%;
   border-collapse: collapse;
