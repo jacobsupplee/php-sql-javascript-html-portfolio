@@ -224,7 +224,7 @@ _END;
   if (count($books) === 0) {
     echo '<p>No books have been added yet.</p>';
   } else {
-    echo '<div class="table-wrapper">';
+    echo '<div class="table-wrapper" role="region" aria-label="Scrollable book list" tabindex="0">';
     echo '<table class="book-table">';
     echo '<caption>Books in the Publications database</caption>';
     echo '<thead><tr><th scope="col">Author</th><th scope="col">Title</th>';
