@@ -71,10 +71,27 @@
     $title    = trim($_POST['title'] ?? '');
     $category = trim($_POST['category'] ?? '');
     $yearInput = $_POST['year'] ?? '';
-    $isbn     = trim($_POST['isbn'] ?? '');
+    $isbn = strtoupper(preg_replace('/[\s-]+/', '', trim($_POST['isbn'] ?? '')));
 
     // Validate submitted values against the classics table's column limits.
     $year = filter_var($yearInput, FILTER_VALIDATE_INT);
+
+    // Accept ISBN-10 or ISBN-13, allowing spaces and hyphens in the form input.
+    $validIsbn = false;
+    if (preg_match('/^[0-9]{9}[0-9X]$/', $isbn)) {
+      $sum = 0;
+      for ($i = 0; $i < 10; $i++) {
+        $digit = $isbn[$i] === 'X' ? 10 : (int) $isbn[$i];
+        $sum += $digit * (10 - $i);
+      }
+      $validIsbn = $sum % 11 === 0;
+    } elseif (preg_match('/^[0-9]{13}$/', $isbn)) {
+      $sum = 0;
+      for ($i = 0; $i < 13; $i++) {
+        $sum += (int) $isbn[$i] * ($i % 2 === 0 ? 1 : 3);
+      }
+      $validIsbn = $sum % 10 === 0;
+    }
     $fieldValues = [
       'author' => $author,
       'title' => $title,
@@ -97,8 +114,8 @@
     }
 
     if ($author === '' || $title === '' || $category === '' || $isbn === '' ||
-        $year === false || $year < -3000 || $year > 2100 || $year === 0) {
-      $formError = 'Enter all fields and a valid year from 3000 BCE through 2100 CE. Use negative numbers for BCE; year 0 is not valid.';
+        !$validIsbn || $year === false || $year < -3000 || $year > 2100 || $year === 0) {
+      $formError = 'Enter all fields, a valid ISBN-10 or ISBN-13, and a year from 3000 BCE through 2100 CE. Use negative numbers for BCE; year 0 is not valid.';
     } elseif ($tooLong) {
       $formError = 'Author and title must be 128 characters or fewer, category 16 or fewer, and ISBN 13 or fewer.';
     } else {
