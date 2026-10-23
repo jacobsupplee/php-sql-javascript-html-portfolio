@@ -168,19 +168,28 @@
     <main>
       <h1>Publications Book Manager</h1>
       <form class="book-form" action="sqltest.php" method="post">
-    <input type="hidden" name="csrf_token" value="$csrfToken">
-    <div><label for="author">Author</label>
-      <input id="author" type="text" name="author" maxlength="128" required></div>
-    <div><label for="title">Title</label>
-      <input id="title" type="text" name="title" maxlength="128" required></div>
-    <div><label for="category">Category</label>
-      <input id="category" type="text" name="category" maxlength="16" required></div>
-    <div><label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
-      <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required>
-      <small>Year 0 is not used. Enter -1 for 1 BCE or 1 for 1 CE.</small></div>
-    <div><label for="isbn">ISBN</label>
-      <input id="isbn" type="text" name="isbn" maxlength="13" required></div>
-    <input type="submit" value="ADD RECORD">
+        <input type="hidden" name="csrf_token" value="$csrfToken">
+        <div class="form-field">
+          <label for="author">Author</label>
+          <input id="author" type="text" name="author" maxlength="128" required>
+        </div>
+        <div class="form-field">
+          <label for="title">Title</label>
+          <input id="title" type="text" name="title" maxlength="128" required>
+        </div>
+        <div class="form-field">
+          <label for="category">Category</label>
+          <input id="category" type="text" name="category" maxlength="16" required>
+        </div>
+        <div class="form-field">
+          <label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
+          <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required>
+        </div>
+        <div class="form-field">
+          <label for="isbn">ISBN</label>
+          <input id="isbn" type="text" name="isbn" maxlength="13" required>
+        </div>
+        <input type="submit" value="ADD RECORD">
       </form>
 _END;
 
