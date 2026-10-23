@@ -192,6 +192,24 @@ footer {
     color: #716c7b;
 }
 
+.formula {
+    margin: 0 0 1.25rem;
+    color: #5c5577;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 700;
+}
+
+.calculation-result {
+    padding: 0.9rem 0;
+}
+
+.calculation-result strong {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* Course rows and totals used by Discussions 6 and 7. */
 .course-list {
     overflow: hidden;
     border: 1px solid #e1dce8;
@@ -241,29 +259,6 @@ footer {
     font-size: 1.15rem;
 }
 
-.calculation-label {
-    margin-bottom: 0.35rem;
-    color: #716c7b;
-    font-weight: 700;
-}
-
-.formula {
-    margin: 0 0 1.25rem;
-    color: #5c5577;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.2rem, 3vw, 1.6rem);
-    font-weight: 700;
-}
-
-.calculation-result {
-    padding: 0.9rem 0;
-}
-
-.calculation-result strong {
-    text-align: right;
-    overflow-wrap: anywhere;
-}
-
 @media (max-width: 640px) {
     .coursework-page {
         width: 92%;
@@ -290,5 +285,95 @@ footer {
     .profile-details > div,
     .calculation-result {
         gap: 0.75rem;
+    }
+}
+
+/* Discussion 7: interactive course registration page. */
+.course-registration label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #5c5577;
+    font-weight: 700;
+}
+
+.course-registration select {
+    width: 100%;
+    max-width: 420px;
+    padding: 0.8rem 0.9rem;
+    color: #4b4b55;
+    background: #fffdf9;
+    border: 1px solid #cfc5d9;
+    border-radius: 10px;
+    font: inherit;
+}
+
+.course-registration select:focus,
+.course-registration button:focus-visible {
+    outline: 3px solid #a9bfd8;
+    outline-offset: 2px;
+}
+
+.registration-list {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.registration-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: #f8f6fa;
+    border: 1px solid #e5dfe8;
+    border-radius: 10px;
+}
+
+.registration-total {
+    margin: 0 0 1rem;
+    color: #5c5577;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.course-registration button {
+    padding: 0.6rem 0.9rem;
+    color: #4b4b55;
+    background: #f0eef6;
+    border: 1px solid #d9d1e2;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.course-registration button:hover {
+    background: #e5dfef;
+}
+
+.course-registration .remove-course {
+    color: #7b4f59;
+    background: #f8edf0;
+    border-color: #ead4da;
+    white-space: nowrap;
+}
+
+.course-registration .remove-course:hover {
+    background: #f1dfe4;
+}
+
+.empty-state {
+    margin: 0;
+    padding: 1rem;
+    color: #716c7b;
+    background: #f8f6fa;
+    border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+    .registration-row {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }
