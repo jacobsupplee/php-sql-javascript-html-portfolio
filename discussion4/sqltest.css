@@ -46,8 +46,24 @@ h1 {
   letter-spacing: -0.035em;
 }
 
-h1 + .book-form {
+h1 + .page-intro {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.page-intro + .book-form {
   margin-top: 1.5rem;
+}
+
+.empty-state {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px dashed #aeb9c7;
+  border-radius: var(--radius);
+  text-align: center;
 }
 
 .book-form {
