@@ -1,117 +1,58 @@
 <!DOCTYPE html>
-
 <!--
     File Name: AssignmentSolution-W6-A1-JacobSupplee.html
     Assignment: Week 6 Assignment 1
-    Version: 1.0
     Author: Jacob Supplee
 -->
-
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Assignment 5: JavaScript Array of Course Objects</title>
     <link rel="stylesheet" href="../design.css">
+    <script src="courseObjects.js" defer></script>
 </head>
-
 <body>
-
-    <div class="container">
-
+    <main class="container coursework-page assignment-five">
         <header>
             <h1>Assignment 5: JavaScript Array of Course Objects</h1>
-            <p>CMSC 340 Web Programming</p>
+            <p>CMSC 340 · Web Programming</p>
         </header>
 
         <section>
             <h2>Course Information</h2>
-            <div id="course-count"></div>
-            <div id="course-list"></div>
-            <p id="total-credits"></p>
-            <p id="cmsc115-result"></p>
+            <p id="course-count" aria-live="polite"></p>
 
-            <script>
-                // Defines the Course class.
-                class Course {
-                    constructor(courseCode, courseTitle, creditHours) {
-                        this.courseCode = courseCode;
-                        this.courseTitle = courseTitle;
-                        this.creditHours = creditHours;
-                    }
-
-                    // Adds this course's information to the page.
-                    renderCourse(container, courseNumber) {
-                        const courseHeading = document.createElement("h3");
-                        courseHeading.textContent = "Course " + courseNumber + " Information";
-                        container.appendChild(courseHeading);
-
-                        const courseCode = document.createElement("p");
-                        courseCode.textContent = "Course Code: " + this.courseCode;
-                        container.appendChild(courseCode);
-
-                        const courseTitle = document.createElement("p");
-                        courseTitle.textContent = "Course Title: " + this.courseTitle;
-                        container.appendChild(courseTitle);
-
-                        const creditHours = document.createElement("p");
-                        creditHours.textContent = "Credit Hours: " + this.creditHours;
-                        container.appendChild(creditHours);
-                    }
-                }
-
-                // Create an array of course objects.
-                const arrayOfCourseObjects = [
-                    new Course("CSC 223", "Data Structures & Analysis Of Algorithms", 4),
-                    new Course("CSC 222", "Object-Oriented Programming", 4),
-                    new Course("MTH 264", "Calculus II", 4),
-                    new Course("MTH 288", "Discrete Mathematics", 3),
-                    new Course("MTH 263", "Calculus I", 4),
-                    new Course("CSC 205", "Computer Organization", 3),
-                    new Course("GOL 106", "Historical Geology", 4),
-                    new Course("GOL 105", "Physical Geology", 4),
-                    new Course("CMIT 265", "Fundamentals Of Networking", 3),
-                    new Course("CMSC 105", "Introduction To Problem Solving And Algorithm Design", 3),
-                    new Course("PACE 111T", "Programming & Career Exploration In Technology", 3)
-                ];
-
-                // Display the number of courses without document.write().
-                const courseCount = document.createElement("p");
-                courseCount.textContent =
-                    "The number of UMGC/NOVA courses I took over the last 3 terms = " +
-                    arrayOfCourseObjects.length;
-                document.getElementById("course-count").appendChild(courseCount);
-
-                // Render each course into the course list.
-                const courseList = document.getElementById("course-list");
-                for (let i = 0; i < arrayOfCourseObjects.length; i++) {
-                    arrayOfCourseObjects[i].renderCourse(courseList, i + 1);
-                }
-
-                // Calculate total credit hours from the course objects.
-                const totalCreditHours = arrayOfCourseObjects.reduce(
-                    (total, course) => total + course.creditHours,
-                    0
-                );
-                document.getElementById("total-credits").textContent =
-                    "Total credit hours: " + totalCreditHours;
-
-                // Check whether any course has the code CMSC 115.
-                const cmsc115Taken = arrayOfCourseObjects.some(
-                    course => course.courseCode === "CMSC 115"
-                );
-
-                document.getElementById("cmsc115-result").textContent = cmsc115Taken
-                    ? "Yes, I have taken the CMSC 115 course."
-                    : "No, I have not taken the CMSC 115 course.";
-            </script>
-
+            <div class="assignment-five-table-wrap">
+                <table class="assignment-five-table">
+                    <caption>Courses taken over the last three terms</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Course Code</th>
+                            <th scope="col">Course Title</th>
+                            <th scope="col">Credit Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="course-table-body">
+                        <!-- JavaScript adds course rows here. -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th scope="row" colspan="3">Total credit hours</th>
+                            <td id="total-credits">Calculating...</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </section>
 
-        <footer>
-            CMSC 340 Web Programming
-        </footer>
+        <section>
+            <h2>CMSC 115 Requirement</h2>
+            <p id="cmsc115-result" aria-live="polite">Checking course list...</p>
+        </section>
 
-    </div>
-
+        <footer>CMSC 340 · Web Programming</footer>
+    </main>
 </body>
 </html>

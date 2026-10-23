@@ -597,3 +597,71 @@ footer {
         padding: 0.7rem;
     }
 }
+
+
+/* Assignment 5: JavaScript course object table. */
+.assignment-five-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e1dce8;
+    border-radius: 12px;
+}
+
+.assignment-five-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.assignment-five-table caption {
+    padding: 0.75rem 1rem;
+    color: #716c7b;
+    text-align: left;
+    font-size: 0.92rem;
+}
+
+.assignment-five-table th,
+.assignment-five-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eee8ef;
+    vertical-align: top;
+}
+
+.assignment-five-table thead th {
+    color: #5c5577;
+    background: #f0eef6;
+}
+
+.assignment-five-table tbody tr:nth-child(even) {
+    background: #f8f6fa;
+}
+
+.assignment-five-table tfoot th,
+.assignment-five-table tfoot td {
+    color: #5c5577;
+    background: #f0eef6;
+    font-weight: 700;
+    border-bottom: 0;
+}
+
+.assignment-five-table th:first-child,
+.assignment-five-table td:first-child,
+.assignment-five-table th:last-child,
+.assignment-five-table td:last-child {
+    white-space: nowrap;
+}
+
+#cmsc115-result {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    background: #f8f6fa;
+    border-left: 4px solid #a9bfd8;
+    border-radius: 0 10px 10px 0;
+}
+
+@media (max-width: 640px) {
+    .assignment-five-table th,
+    .assignment-five-table td {
+        padding: 0.7rem;
+    }
+}
