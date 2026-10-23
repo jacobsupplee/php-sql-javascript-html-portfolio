@@ -51,7 +51,15 @@
 
   $message = $_SESSION['flash_message'] ?? '';
   $formError = $_SESSION['flash_error'] ?? '';
-  unset($_SESSION['flash_message'], $_SESSION['flash_error']);
+  $formValues = $_SESSION['form_values'] ?? [];
+  unset($_SESSION['flash_message'], $_SESSION['flash_error'], $_SESSION['form_values']);
+
+  // Restore submitted values after a validation error so users do not retype everything.
+  $authorValue = htmlspecialchars($formValues['author'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $titleValue = htmlspecialchars($formValues['title'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $categoryValue = htmlspecialchars($formValues['category'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $yearValue = htmlspecialchars($formValues['year'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $isbnValue = htmlspecialchars($formValues['isbn'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
   if (isset($_POST['delete'])) {
     $isbn = trim($_POST['isbn'] ?? '');
@@ -165,6 +173,17 @@
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['flash_message'] = $message;
     $_SESSION['flash_error'] = $formError;
+
+    if ($formError !== '' && !isset($_POST['delete'])) {
+      $_SESSION['form_values'] = [
+        'author' => $_POST['author'] ?? '',
+        'title' => $_POST['title'] ?? '',
+        'category' => $_POST['category'] ?? '',
+        'year' => $_POST['year'] ?? '',
+        'isbn' => $_POST['isbn'] ?? '',
+      ];
+    }
+
     header('Location: sqltest.php');
     exit;
   }
@@ -187,23 +206,23 @@
         <input type="hidden" name="csrf_token" value="$csrfToken">
         <div class="form-field">
           <label for="author">Author</label>
-          <input id="author" type="text" name="author" maxlength="128" required>
+          <input id="author" type="text" name="author" maxlength="128" value="$authorValue" required>
         </div>
         <div class="form-field">
           <label for="title">Title</label>
-          <input id="title" type="text" name="title" maxlength="128" required>
+          <input id="title" type="text" name="title" maxlength="128" value="$titleValue" required>
         </div>
         <div class="form-field">
           <label for="category">Category</label>
-          <input id="category" type="text" name="category" maxlength="16" required>
+          <input id="category" type="text" name="category" maxlength="16" value="$categoryValue" required>
         </div>
         <div class="form-field">
           <label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
-          <input id="year" type="number" name="year" min="-3000" max="2100" step="1" required>
+          <input id="year" type="number" name="year" min="-3000" max="2100" step="1" value="$yearValue" required>
         </div>
         <div class="form-field">
           <label for="isbn">ISBN</label>
-          <input id="isbn" type="text" name="isbn" maxlength="17" autocapitalize="characters" spellcheck="false" required>
+          <input id="isbn" type="text" name="isbn" maxlength="17" value="$isbnValue" autocapitalize="characters" spellcheck="false" required>
         </div>
         <input type="submit" value="ADD RECORD">
       </form>
