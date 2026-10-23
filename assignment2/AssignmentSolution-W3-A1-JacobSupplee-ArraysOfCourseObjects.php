@@ -1,31 +1,35 @@
 <?php
-
-//Establishing the course class with private variables
-class Course {
+// A Course object stores the information for one course.
+class Course
+{
     private $courseCode;
     private $courseTitle;
     private $creditHours;
 
-    //Constructor to initialize private attributes
-    public function __construct($courseCode, $courseTitle, $creditHours) {
+    public function __construct($courseCode, $courseTitle, $creditHours)
+    {
         $this->courseCode = $courseCode;
         $this->courseTitle = $courseTitle;
         $this->creditHours = $creditHours;
     }
 
-    //Function to print each Course's information
-    public function printCourse() {
-        echo "Course Code: " . $this->courseCode . "<br>";
-        echo "Course Title: " . $this->courseTitle . "<br>";
-        echo "Credit Hours: " . $this->creditHours . "<br>";
-    }
-
-    //Funtion to retrieve the course code for CMSC 115 prompt
-    public function getCourseCode() {
+    public function getCourseCode()
+    {
         return $this->courseCode;
     }
+
+    public function getCourseTitle()
+    {
+        return $this->courseTitle;
+    }
+
+    public function getCreditHours()
+    {
+        return $this->creditHours;
+    }
 }
-//My personalized array
+
+// My courses from the last three terms.
 $arrayOfCourseObjects = array(
     new Course("CMIT 265", "Fundamentals of Networking", 3),
     new Course("CMSC 105", "Intro to Problem Solving and Algorithm Design", 3),
@@ -40,17 +44,16 @@ $arrayOfCourseObjects = array(
     new Course("MTH 263", "Calculus I", 4)
 );
 
-//Printing total number of Course objects in the array
-echo "The number of UMGC/Transfer courses I took over the last 3 terms = " . count($arrayOfCourseObjects) . "<br><br>";
-
-//Iterating through my Course objects and incrementing the index
-foreach ($arrayOfCourseObjects as $index => $course) {
-    echo "Course #" . ($index + 1) . " Information:<br>";
-    $course->printCourse();
-    echo "<br>";
+function escapeHtml($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
 
-//Looping through array, checking for CMSC 115
+$totalCreditHours = 0;
+foreach ($arrayOfCourseObjects as $course) {
+    $totalCreditHours += $course->getCreditHours();
+}
+
 $cmsc115Taken = false;
 foreach ($arrayOfCourseObjects as $course) {
     if ($course->getCourseCode() === "CMSC 115") {
@@ -58,12 +61,72 @@ foreach ($arrayOfCourseObjects as $course) {
         break;
     }
 }
-
-//Printing the CMSC 115 answer
-if ($cmsc115Taken) {
-    echo "Yes, I have taken the CMSC 115 course.";
-} else {
-    echo "No, I have not taken the CMSC 115 course.";
-}
-
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assignment 2: PHP Array of Course Objects</title>
+    <link rel="stylesheet" href="../design.css">
+</head>
+<body>
+    <main class="container coursework-page assignment-two">
+        <header>
+            <h1>Assignment 2</h1>
+            <p>PHP array of course objects</p>
+        </header>
+
+        <section>
+            <h2>Course Summary</h2>
+            <div class="assignment-two-summary">
+                <div>
+                    <span>Courses</span>
+                    <strong><?= count($arrayOfCourseObjects) ?></strong>
+                </div>
+                <div>
+                    <span>Total credit hours</span>
+                    <strong><?= $totalCreditHours ?></strong>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>My Courses</h2>
+            <div class="assignment-two-table-wrap">
+                <table class="assignment-two-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Course Code</th>
+                            <th scope="col">Course Title</th>
+                            <th scope="col">Credits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($arrayOfCourseObjects as $index => $course): ?>
+                            <tr>
+                                <td><?= $index + 1 ?></td>
+                                <td><?= escapeHtml($course->getCourseCode()) ?></td>
+                                <td><?= escapeHtml($course->getCourseTitle()) ?></td>
+                                <td><?= (int) $course->getCreditHours() ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2>CMSC 115 Requirement</h2>
+            <p class="assignment-two-answer">
+                <?= $cmsc115Taken
+                    ? "Yes, I have taken the CMSC 115 course."
+                    : "No, I have not taken the CMSC 115 course." ?>
+            </p>
+        </section>
+
+        <footer>CMSC 340 · Web Programming</footer>
+    </main>
+</body>
+</html>
