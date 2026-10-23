@@ -116,7 +116,8 @@ h1 + .page-intro {
   transform: translateY(1px);
 }
 
-.clear-search {
+.clear-search,
+.edit-link {
   display: inline-flex;
   min-height: 2.5rem;
   align-items: center;
@@ -128,6 +129,28 @@ h1 + .page-intro {
 }
 
 .clear-search:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.edit-link {
+  min-height: 2.5rem;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  text-decoration: none;
+}
+
+.edit-link:hover {
+  color: #fff;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.edit-link:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
