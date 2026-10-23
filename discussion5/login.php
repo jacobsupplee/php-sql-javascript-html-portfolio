@@ -1,50 +1,74 @@
 <?php
+// HTTP Basic Authentication demo.
+// Keep credentials in auth.local.php, which is excluded from Git.
 
-$username = "jacobsupplee";
-$password = "qwerty1234";
+$configPath = __DIR__ . '/auth.local.php';
 
-if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-
-    if ($_SERVER['PHP_AUTH_USER'] === $username &&
-        $_SERVER['PHP_AUTH_PW'] === $password) {
-
-        $message = "Welcome " . htmlspecialchars($_SERVER['PHP_AUTH_USER']);
-        $submessage = "You are now logged in.";
-
-    } else {
-
-        $message = "Invalid username/password combination.";
-        $submessage = "";
-
-    }
-
-} else {
-
-    header('WWW-Authenticate: Basic realm="Discussion 5"');
-    header('HTTP/1.1 401 Unauthorized');
-
-    $message = "Please enter your username and password.";
-    $submessage = "";
+if (!is_file($configPath)) {
+    http_response_code(500);
+    exit('Authentication is not configured. Copy auth.example.php to auth.local.php and set local demo credentials.');
 }
 
-?>
+try {
+    $authConfig = require $configPath;
+} catch (Throwable $e) {
+    error_log('Discussion 5 authentication configuration failed: ' . $e->getMessage());
+    http_response_code(500);
+    exit('Authentication could not be configured. Check the local configuration file.');
+}
 
+if (
+    !is_array($authConfig) ||
+    !isset($authConfig['username'], $authConfig['password']) ||
+    !is_string($authConfig['username']) ||
+    !is_string($authConfig['password']) ||
+    $authConfig['username'] === '' ||
+    $authConfig['password'] === ''
+) {
+    http_response_code(500);
+    exit('Authentication configuration is missing a username or password.');
+}
+
+$username = $authConfig['username'];
+$password = $authConfig['password'];
+
+$providedUsername = $_SERVER['PHP_AUTH_USER'] ?? '';
+$providedPassword = $_SERVER['PHP_AUTH_PW'] ?? '';
+
+$isAuthenticated =
+    is_string($providedUsername) &&
+    is_string($providedPassword) &&
+    hash_equals($username, $providedUsername) &&
+    hash_equals($password, $providedPassword);
+
+if (!$isAuthenticated) {
+    // HTTP Basic Auth makes the browser display its built-in credential prompt.
+    header('WWW-Authenticate: Basic realm="Discussion 5", charset="UTF-8"');
+    http_response_code(401);
+    $pageTitle = 'Authentication required';
+    $message = 'Enter the configured demo credentials to continue.';
+    $submessage = 'This page demonstrates HTTP Basic Authentication.';
+} else {
+    http_response_code(200);
+    $pageTitle = 'Authentication successful';
+    $safeUsername = htmlspecialchars($providedUsername, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    $message = 'Welcome, ' . $safeUsername . '.';
+    $submessage = 'Your credentials were accepted by the server.';
+}
+?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Discussion 5 - HTTP Authentication</title>
     <link rel="stylesheet" href="../design.css">
 </head>
-
 <body>
-
-    <div class="login-box">
-        <h1><?php echo $message; ?></h1>
-
-        <?php if ($submessage !== ""): ?>
-            <p><?php echo $submessage; ?></p>
-        <?php endif; ?>
-    </div>
-
+    <main class="login-box">
+        <h1><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h1>
+        <p><?= $message ?></p>
+        <p><?= htmlspecialchars($submessage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+    </main>
 </body>
 </html>
