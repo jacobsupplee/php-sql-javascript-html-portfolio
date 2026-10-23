@@ -4,7 +4,7 @@ This repo contains web projects I've built while studying Computer Science at UM
 
 ## Featured Projects
 
-- **[Publications Library Manager](php-mysql-library-manager/)** — A PHP and MySQL app for adding, searching, and managing book records.
+- **[Publications Library Manager](php-mysql-library-manager/)** — A PHP and MySQL app for adding, searching, editing, and deleting book records, with ISBN validation and prepared SQL statements.
 - **[Interactive Course Registration](javascript-course-registration/)** — A JavaScript app for selecting courses, preventing duplicates, and keeping track of credit totals.
 - **[PDO Course Database](php-pdo-course-database/)** — A PHP app that uses PDO to add and display course records.
 
