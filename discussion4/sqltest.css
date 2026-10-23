@@ -34,6 +34,28 @@ input[type="submit"]:focus-visible {
   outline-offset: 2px;
 }
 
+.table-wrapper:focus-visible {
+  outline: 3px solid #2457c5;
+  outline-offset: 3px;
+}
+
+[role="status"],
+[role="alert"] {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid;
+}
+
+[role="status"] {
+  border-color: #267342;
+  background: #eef8f0;
+}
+
+[role="alert"] {
+  border-color: #b42318;
+  background: #fff1f0;
+}
+
 .table-wrapper {
   max-width: 100%;
   overflow-x: auto;
