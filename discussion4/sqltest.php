@@ -106,9 +106,9 @@
       $query = "INSERT INTO classics
         (author, title, category, year, isbn)
         VALUES (:author, :title, :category, :year, :isbn)";
-      $statement = $pdo->prepare($query);
 
       try {
+        $statement = $pdo->prepare($query);
         $statement->execute([
           ':author'   => $author,
           ':title'    => $title,
