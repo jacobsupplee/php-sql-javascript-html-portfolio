@@ -24,12 +24,20 @@
   }
 
   // Form fields should be scalar values, not arrays supplied in a crafted request.
-  foreach (['author', 'title', 'category', 'year', 'isbn', 'delete', 'return_page'] as $field) {
+  foreach (['author', 'title', 'category', 'year', 'isbn', 'delete', 'return_page', 'return_search'] as $field) {
     if (isset($_POST[$field]) && !is_string($_POST[$field])) {
       http_response_code(400);
       exit('Invalid form submission.');
     }
   }
+
+  if (isset($_GET['search']) && !is_string($_GET['search'])) {
+    http_response_code(400);
+    exit('Invalid search request.');
+  }
+  $searchTerm = trim($_GET['search'] ?? '');
+  $searchValue = htmlspecialchars($searchTerm, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $searchQuery = $searchTerm !== '' ? '&search=' . rawurlencode($searchTerm) : '';
 
   try {
     require_once __DIR__ . '/login.php';
@@ -216,7 +224,12 @@
 
     $returnPage = $_POST['return_page'] ?? '1';
     $returnPage = ctype_digit($returnPage) ? max(1, (int) $returnPage) : 1;
-    header('Location: sqltest.php?page=' . $returnPage);
+    $returnSearch = trim($_POST['return_search'] ?? '');
+    $redirectUrl = 'sqltest.php?page=' . $returnPage;
+    if ($returnSearch !== '') {
+      $redirectUrl .= '&search=' . rawurlencode($returnSearch);
+    }
+    header('Location: ' . $redirectUrl);
     exit;
   }
 
@@ -240,8 +253,17 @@
     <main>
       <h1>Publications Book Manager</h1>
       <p class="page-intro">Add a book to the Publications database or manage existing records.</p>
+      <form class="search-form" action="sqltest.php" method="get" role="search">
+        <label for="book-search">Search books</label>
+        <div class="search-controls">
+          <input id="book-search" type="search" name="search" value="$searchValue" placeholder="Title, author, or ISBN">
+          <button type="submit">Search</button>
+          <a class="clear-search" href="sqltest.php">Clear</a>
+        </div>
+      </form>
       <form class="book-form" action="sqltest.php" method="post">
         <input type="hidden" name="csrf_token" value="$csrfToken">
+        <input type="hidden" name="return_search" value="$searchValue">
         <div class="form-field">
           <label for="author">Author</label>
           <input id="author" type="text" name="author" maxlength="128" value="$authorValue" required aria-invalid="$authorInvalid">
@@ -275,21 +297,43 @@ _END;
 
   // Limit each result page so the manager remains responsive as the table grows.
   $booksPerPage = 25;
+  $searchPattern = '%' . $searchTerm . '%';
   $requestedPage = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT);
   $currentPage = $requestedPage === false || $requestedPage === null
     ? 1
     : max(1, $requestedPage);
 
   try {
-    $totalBooks = (int) $pdo->query("SELECT COUNT(*) FROM classics")->fetchColumn();
+    if ($searchTerm !== '') {
+      $countStatement = $pdo->prepare("SELECT COUNT(*) FROM classics
+        WHERE title LIKE :title OR author LIKE :author OR isbn LIKE :isbn");
+      $countStatement->execute([
+        ':title' => $searchPattern,
+        ':author' => $searchPattern,
+        ':isbn' => $searchPattern,
+      ]);
+      $totalBooks = (int) $countStatement->fetchColumn();
+    } else {
+      $totalBooks = (int) $pdo->query("SELECT COUNT(*) FROM classics")->fetchColumn();
+    }
     $totalPages = max(1, (int) ceil($totalBooks / $booksPerPage));
     $currentPage = min($currentPage, $totalPages);
     $offset = ($currentPage - 1) * $booksPerPage;
 
-    $query = "SELECT author, title, category, year, isbn
-      FROM classics ORDER BY title ASC, isbn ASC
-      LIMIT :limit OFFSET :offset";
-    $statement = $pdo->prepare($query);
+    if ($searchTerm !== '') {
+      $query = "SELECT author, title, category, year, isbn FROM classics
+        WHERE title LIKE :title OR author LIKE :author OR isbn LIKE :isbn
+        ORDER BY title ASC, isbn ASC LIMIT :limit OFFSET :offset";
+      $statement = $pdo->prepare($query);
+      $statement->bindValue(':title', $searchPattern, PDO::PARAM_STR);
+      $statement->bindValue(':author', $searchPattern, PDO::PARAM_STR);
+      $statement->bindValue(':isbn', $searchPattern, PDO::PARAM_STR);
+    } else {
+      $query = "SELECT author, title, category, year, isbn
+        FROM classics ORDER BY title ASC, isbn ASC
+        LIMIT :limit OFFSET :offset";
+      $statement = $pdo->prepare($query);
+    }
     $statement->bindValue(':limit', $booksPerPage, PDO::PARAM_INT);
     $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
     $statement->execute();
@@ -301,10 +345,14 @@ _END;
   }
 
   if ($totalBooks === 0) {
-    echo '<p class="empty-state">No books have been added yet. Use the form above to add the first record.</p>';
+    $emptyMessage = $searchTerm !== ''
+      ? 'No books matched “' . htmlspecialchars($searchTerm, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '”. Try another search.'
+      : 'No books have been added yet. Use the form above to add the first record.';
+    echo '<p class="empty-state">' . $emptyMessage . '</p>';
   } else {
+    $summaryLabel = $searchTerm !== '' ? ' matching books' : ' books';
     echo '<p class="table-summary">Showing ' . ($offset + 1) . '–' .
-      min($offset + $booksPerPage, $totalBooks) . ' of ' . $totalBooks . ' books.</p>';
+      min($offset + $booksPerPage, $totalBooks) . ' of ' . $totalBooks . $summaryLabel . '.</p>';
     echo '<div class="table-wrapper" role="region" aria-label="Scrollable book list" tabindex="0">';
     echo '<table class="book-table">';
     echo '<caption>Books in the Publications database</caption>';
@@ -331,6 +379,7 @@ _END;
         htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
       echo '<input type="hidden" name="return_page" value="' . $currentPage . '">';
+      echo '<input type="hidden" name="return_search" value="' . $searchValue . '">';
       echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
       echo '<button type="submit" aria-label="Delete ' .
         htmlspecialchars($row->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') .
@@ -345,14 +394,14 @@ _END;
       echo '<nav class="pagination" aria-label="Book list pages">';
 
       if ($currentPage > 1) {
-        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . '" aria-label="Go to previous page">Previous</a>';
+        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . $searchQuery . '" aria-label="Go to previous page">Previous</a>';
       }
 
       $firstPage = max(1, $currentPage - 2);
       $lastPage = min($totalPages, $currentPage + 2);
 
       if ($firstPage > 1) {
-        echo '<a href="sqltest.php?page=1" aria-label="Go to page 1">1</a>';
+        echo '<a href="sqltest.php?page=1' . $searchQuery . '" aria-label="Go to page 1">1</a>';
         if ($firstPage > 2) {
           echo '<span aria-hidden="true">…</span>';
         }
@@ -362,7 +411,7 @@ _END;
         if ($page === $currentPage) {
           echo '<span aria-current="page" aria-label="Current page, page ' . $page . '">' . $page . '</span>';
         } else {
-          echo '<a href="sqltest.php?page=' . $page . '" aria-label="Go to page ' . $page . '">' . $page . '</a>';
+          echo '<a href="sqltest.php?page=' . $page . $searchQuery . '" aria-label="Go to page ' . $page . '">' . $page . '</a>';
         }
       }
 
@@ -370,11 +419,11 @@ _END;
         if ($lastPage < $totalPages - 1) {
           echo '<span aria-hidden="true">…</span>';
         }
-        echo '<a href="sqltest.php?page=' . $totalPages . '" aria-label="Go to page ' . $totalPages . '">' . $totalPages . '</a>';
+        echo '<a href="sqltest.php?page=' . $totalPages . $searchQuery . '" aria-label="Go to page ' . $totalPages . '">' . $totalPages . '</a>';
       }
 
       if ($currentPage < $totalPages) {
-        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . '" aria-label="Go to next page">Next</a>';
+        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . $searchQuery . '" aria-label="Go to next page">Next</a>';
       }
 
       echo '</nav>';
