@@ -24,7 +24,7 @@
   }
 
   // Form fields should be scalar values, not arrays supplied in a crafted request.
-  foreach (['author', 'title', 'category', 'year', 'isbn', 'delete'] as $field) {
+  foreach (['author', 'title', 'category', 'year', 'isbn', 'delete', 'return_page'] as $field) {
     if (isset($_POST[$field]) && !is_string($_POST[$field])) {
       http_response_code(400);
       exit('Invalid form submission.');
@@ -184,7 +184,9 @@
       ];
     }
 
-    header('Location: sqltest.php');
+    $returnPage = $_POST['return_page'] ?? '1';
+    $returnPage = ctype_digit($returnPage) ? max(1, (int) $returnPage) : 1;
+    header('Location: sqltest.php?page=' . $returnPage);
     exit;
   }
 
@@ -292,6 +294,7 @@ _END;
       echo '<input type="hidden" name="csrf_token" value="' .
         htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
+      echo '<input type="hidden" name="return_page" value="' . $currentPage . '">';
       echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
       echo '<button type="submit" aria-label="Delete ' .
         htmlspecialchars($row->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') .
@@ -306,13 +309,36 @@ _END;
       echo '<nav class="pagination" aria-label="Book list pages">';
 
       if ($currentPage > 1) {
-        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . '">Previous</a>';
+        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . '" aria-label="Go to previous page">Previous</a>';
       }
 
-      echo '<span aria-current="page">Page ' . $currentPage . ' of ' . $totalPages . '</span>';
+      $firstPage = max(1, $currentPage - 2);
+      $lastPage = min($totalPages, $currentPage + 2);
+
+      if ($firstPage > 1) {
+        echo '<a href="sqltest.php?page=1" aria-label="Go to page 1">1</a>';
+        if ($firstPage > 2) {
+          echo '<span aria-hidden="true">…</span>';
+        }
+      }
+
+      for ($page = $firstPage; $page <= $lastPage; $page++) {
+        if ($page === $currentPage) {
+          echo '<span aria-current="page" aria-label="Current page, page ' . $page . '">' . $page . '</span>';
+        } else {
+          echo '<a href="sqltest.php?page=' . $page . '" aria-label="Go to page ' . $page . '">' . $page . '</a>';
+        }
+      }
+
+      if ($lastPage < $totalPages) {
+        if ($lastPage < $totalPages - 1) {
+          echo '<span aria-hidden="true">…</span>';
+        }
+        echo '<a href="sqltest.php?page=' . $totalPages . '" aria-label="Go to page ' . $totalPages . '">' . $totalPages . '</a>';
+      }
 
       if ($currentPage < $totalPages) {
-        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . '">Next</a>';
+        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . '" aria-label="Go to next page">Next</a>';
       }
 
       echo '</nav>';
