@@ -190,7 +190,7 @@
         </div>
         <div class="form-field">
           <label for="isbn">ISBN</label>
-          <input id="isbn" type="text" name="isbn" maxlength="13" required>
+          <input id="isbn" type="text" name="isbn" maxlength="17" autocapitalize="characters" spellcheck="false" required>
         </div>
         <input type="submit" value="ADD RECORD">
       </form>
