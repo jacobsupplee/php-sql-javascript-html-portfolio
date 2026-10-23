@@ -51,8 +51,14 @@
 
   $message = $_SESSION['flash_message'] ?? '';
   $formError = $_SESSION['flash_error'] ?? '';
+  $invalidField = $_SESSION['invalid_field'] ?? '';
   $formValues = $_SESSION['form_values'] ?? [];
-  unset($_SESSION['flash_message'], $_SESSION['flash_error'], $_SESSION['form_values']);
+  unset(
+    $_SESSION['flash_message'],
+    $_SESSION['flash_error'],
+    $_SESSION['invalid_field'],
+    $_SESSION['form_values']
+  );
 
   // Restore submitted values after a validation error so users do not retype everything.
   $authorValue = htmlspecialchars($formValues['author'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -134,13 +140,35 @@
       }
     }
 
-    if ($author === '' || $title === '' || $category === '' || $isbn === '' || $yearInput === '') {
-      $formError = 'Complete all fields before submitting the form.';
+    $invalidField = '';
+    if ($author === '') {
+      $invalidField = 'author';
+      $formError = 'Enter an author.';
+    } elseif ($title === '') {
+      $invalidField = 'title';
+      $formError = 'Enter a title.';
+    } elseif ($category === '') {
+      $invalidField = 'category';
+      $formError = 'Enter a category.';
+    } elseif ($yearInput === '') {
+      $invalidField = 'year';
+      $formError = 'Enter a publication year.';
+    } elseif ($isbn === '') {
+      $invalidField = 'isbn';
+      $formError = 'Enter an ISBN.';
     } elseif ($tooLong) {
+      foreach ($fieldLimits as $field => $maxLength) {
+        if (strlen($fieldValues[$field]) > $maxLength) {
+          $invalidField = $field;
+          break;
+        }
+      }
       $formError = 'Author and title must be 128 characters or fewer, category 16 or fewer, and ISBN 13 or fewer.';
     } elseif (!$validIsbn) {
+      $invalidField = 'isbn';
       $formError = 'Enter a valid ISBN-10 or ISBN-13.';
     } elseif ($year === false || $year < -3000 || $year > 2100 || $year === 0) {
+      $invalidField = 'year';
       $formError = 'Enter a year from 3000 BCE through 2100 CE. Use a negative number for BCE; year 0 is not valid.';
     } else {
       // Bind form values separately so they cannot change the SQL query.
@@ -161,6 +189,7 @@
       } catch (PDOException $e) {
         // MySQL error 1062 means a unique value, such as the ISBN, already exists.
         if (($e->errorInfo[1] ?? null) === 1062) {
+          $invalidField = 'isbn';
           $formError = 'A book with that ISBN already exists.';
         } else {
           error_log('Publications book insertion failed: ' . $e->getMessage());
@@ -173,6 +202,7 @@
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['flash_message'] = $message;
     $_SESSION['flash_error'] = $formError;
+    $_SESSION['invalid_field'] = $invalidField ?? '';
 
     if ($formError !== '' && !isset($_POST['delete'])) {
       $_SESSION['form_values'] = [
@@ -191,6 +221,11 @@
   }
 
   $csrfToken = htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  $authorInvalid = $invalidField === 'author' ? 'true' : 'false';
+  $titleInvalid = $invalidField === 'title' ? 'true' : 'false';
+  $categoryInvalid = $invalidField === 'category' ? 'true' : 'false';
+  $yearInvalid = $invalidField === 'year' ? 'true' : 'false';
+  $isbnInvalid = $invalidField === 'isbn' ? 'true' : 'false';
 
   echo <<<_END
   <!DOCTYPE html>
@@ -208,23 +243,23 @@
         <input type="hidden" name="csrf_token" value="$csrfToken">
         <div class="form-field">
           <label for="author">Author</label>
-          <input id="author" type="text" name="author" maxlength="128" value="$authorValue" required>
+          <input id="author" type="text" name="author" maxlength="128" value="$authorValue" required aria-invalid="$authorInvalid">
         </div>
         <div class="form-field">
           <label for="title">Title</label>
-          <input id="title" type="text" name="title" maxlength="128" value="$titleValue" required>
+          <input id="title" type="text" name="title" maxlength="128" value="$titleValue" required aria-invalid="$titleInvalid">
         </div>
         <div class="form-field">
           <label for="category">Category</label>
-          <input id="category" type="text" name="category" maxlength="16" value="$categoryValue" required>
+          <input id="category" type="text" name="category" maxlength="16" value="$categoryValue" required aria-invalid="$categoryInvalid">
         </div>
         <div class="form-field">
           <label for="year">Year (negative numbers for BCE, e.g. -3000)</label>
-          <input id="year" type="number" name="year" min="-3000" max="2100" step="1" value="$yearValue" required>
+          <input id="year" type="number" name="year" min="-3000" max="2100" step="1" value="$yearValue" required aria-invalid="$yearInvalid">
         </div>
         <div class="form-field">
           <label for="isbn">ISBN</label>
-          <input id="isbn" type="text" name="isbn" maxlength="17" value="$isbnValue" autocapitalize="characters" spellcheck="false" required>
+          <input id="isbn" type="text" name="isbn" maxlength="17" value="$isbnValue" autocapitalize="characters" spellcheck="false" required aria-invalid="$isbnInvalid">
         </div>
         <input type="submit" value="ADD RECORD">
       </form>
