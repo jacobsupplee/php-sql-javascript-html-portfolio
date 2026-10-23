@@ -24,7 +24,7 @@
   }
 
   try {
-    require_once 'login.php';
+    require_once __DIR__ . '/login.php';
   } catch (Throwable $e) {
     // Configuration errors can contain sensitive paths or settings; log them privately.
     error_log('Publications database configuration failed: ' . $e->getMessage());
