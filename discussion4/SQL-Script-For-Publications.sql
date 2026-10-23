@@ -52,17 +52,25 @@ USE publications;
 DROP TABLE IF EXISTS classics;
 
 CREATE TABLE classics (
-  author varchar(128) default NULL,
-  title varchar(128) default NULL,
-  category varchar(16) default NULL,
-  year smallint(6) default NULL,
-  isbn char(13) NOT NULL default '',
-  PRIMARY KEY  (isbn),
+  author varchar(128) NOT NULL,
+  title varchar(128) NOT NULL,
+  category varchar(16) NOT NULL,
+  year smallint NOT NULL,
+  isbn char(13) NOT NULL,
+  PRIMARY KEY (isbn),
   KEY author (author(20)),
   KEY title (title(20)),
   KEY category (category(4)),
   KEY year (year),
-  FULLTEXT KEY author_2 (author,title)
+  FULLTEXT KEY author_2 (author,title),
+  CONSTRAINT chk_classics_author_nonempty
+    CHECK (CHAR_LENGTH(TRIM(author)) > 0),
+  CONSTRAINT chk_classics_title_nonempty
+    CHECK (CHAR_LENGTH(TRIM(title)) > 0),
+  CONSTRAINT chk_classics_category_nonempty
+    CHECK (CHAR_LENGTH(TRIM(category)) > 0),
+  CONSTRAINT chk_classics_year_range
+    CHECK (year BETWEEN -3000 AND 2100 AND year <> 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 select * from classics;
