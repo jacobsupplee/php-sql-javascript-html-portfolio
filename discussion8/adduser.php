@@ -8,12 +8,24 @@ function escape_output(string $value): string
 
 function validate_forename(string $field): string
 {
-    return trim($field) === '' ? 'Enter your first name.' : '';
+    if (trim($field) === '') {
+        return 'Enter your first name.';
+    }
+    if (strlen($field) > 32) {
+        return 'First names must be 32 characters or fewer.';
+    }
+    return '';
 }
 
 function validate_surname(string $field): string
 {
-    return trim($field) === '' ? 'Enter your last name.' : '';
+    if (trim($field) === '') {
+        return 'Enter your last name.';
+    }
+    if (strlen($field) > 32) {
+        return 'Last names must be 32 characters or fewer.';
+    }
+    return '';
 }
 
 function validate_username(string $field): string
@@ -21,8 +33,8 @@ function validate_username(string $field): string
     if ($field === '') {
         return 'Enter a username.';
     }
-    if (strlen($field) < 5) {
-        return 'Usernames must be at least 5 characters.';
+    if (strlen($field) < 5 || strlen($field) > 16) {
+        return 'Usernames must be between 5 and 16 characters.';
     }
     if (!preg_match('/^[a-zA-Z0-9_-]+$/', $field)) {
         return 'Usernames may contain only letters, numbers, hyphens, and underscores.';
@@ -35,8 +47,8 @@ function validate_password(string $field): string
     if ($field === '') {
         return 'Enter a password.';
     }
-    if (strlen($field) < 8) {
-        return 'Passwords must be at least 8 characters.';
+    if (strlen($field) < 8 || strlen($field) > 128) {
+        return 'Passwords must be between 8 and 128 characters.';
     }
     if (!preg_match('/[a-z]/', $field) ||
         !preg_match('/[A-Z]/', $field) ||
@@ -60,6 +72,9 @@ function validate_age(string $field): string
 
 function validate_email(string $field): string
 {
+    if (strlen($field) > 254) {
+        return 'Email addresses must be 254 characters or fewer.';
+    }
     if ($field === '' || filter_var($field, FILTER_VALIDATE_EMAIL) === false) {
         return 'Enter a valid email address.';
     }
