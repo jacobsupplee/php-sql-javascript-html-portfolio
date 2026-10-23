@@ -69,6 +69,16 @@ input[type="submit"] {
   padding: 0.45rem 0.7rem;
 }
 
+button:hover,
+input[type="submit"]:hover {
+  filter: brightness(0.92);
+}
+
+button:active,
+input[type="submit"]:active {
+  filter: brightness(0.84);
+}
+
 @media (max-width: 600px) {
   body {
     margin-top: 1rem;
