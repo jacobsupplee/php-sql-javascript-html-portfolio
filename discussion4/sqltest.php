@@ -228,7 +228,7 @@ _END;
       $yearValue = (int) $row->year;
       $yearLabel = $yearValue < 0
         ? abs($yearValue) . ' BCE'
-        : $yearValue . ' CE';
+        : (string) $yearValue;
       $year = htmlspecialchars($yearLabel, ENT_QUOTES, 'UTF-8');
       $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
 
