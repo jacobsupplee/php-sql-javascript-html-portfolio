@@ -46,13 +46,13 @@ $user2 = new User("Wilma", "Leesburg", "Virginia", "76°F", "August 24, 2026");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Discussion 2: User Objects</title>
+    <title>PHP User Profile Objects</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>
     <main class="container coursework-page discussion-two">
         <header>
-            <h1>Discussion 2: User Objects</h1>
+            <h1>PHP User Profile Objects</h1>
             <p>Using a PHP class to store and display profile information</p>
         </header>
         <section>

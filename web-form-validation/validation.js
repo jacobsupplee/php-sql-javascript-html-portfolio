@@ -1,4 +1,4 @@
-// Client-side checks improve feedback, but adduser.php must validate again.
+// Client-side checks improve feedback, but server-validation.php must validate again.
 function validate(form) {
     const errors = [
         validateForename(form.elements.forename.value),

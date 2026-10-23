@@ -58,13 +58,13 @@ function escapeHtml($value)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Discussion 3: Transcript Generator</title>
+    <title>PHP Course Data Structures</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>
     <main class="container coursework-page transcript-page">
         <header>
-            <h1>Transcript Generator</h1>
+            <h1>PHP Course Data Structures</h1>
             <p>Comparing associative arrays with arrays of Course objects</p>
         </header>
 

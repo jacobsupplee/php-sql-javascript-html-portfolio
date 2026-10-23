@@ -1,5 +1,5 @@
 <?php
-// CMSC 340: PHP PDO MyCourses Table
+// PDO Course Database demonstration
 // Uses local database settings stored in config.local.php.
 
 session_start();
@@ -122,13 +122,13 @@ foreach ($courses as $course) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My UMGC Courses</title>
+    <title>PDO Course Database</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>
     <main class="container coursework-page assignment-four">
         <header>
-            <h1>My UMGC Courses</h1>
+            <h1>PDO Course Database</h1>
             <p>Add a course and review the courses stored in the database.</p>
         </header>
 

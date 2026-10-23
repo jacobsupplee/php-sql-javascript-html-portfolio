@@ -67,13 +67,13 @@ foreach ($arrayOfCourseObjects as $course) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Assignment 2: PHP Array of Course Objects</title>
+    <title>PHP Course Object Collection</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>
     <main class="container coursework-page assignment-two">
         <header>
-            <h1>Assignment 2</h1>
+            <h1>PHP Course Object Collection</h1>
             <p>PHP array of course objects</p>
         </header>
 

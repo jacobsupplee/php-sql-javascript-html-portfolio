@@ -1,22 +1,34 @@
-# Web Programming Projects
+# Web Development Portfolio
 
-A collection of web projects built with HTML, CSS, JavaScript, PHP, and MySQL. The examples cover front-end interactions, form processing, server-side logic, and database operations.
+A collection of web development projects built with PHP, JavaScript, HTML, CSS, and MySQL. The projects demonstrate object-oriented programming, interactive interfaces, database operations, input validation, and foundational web security practices.
 
-## What's Included
+## Project Areas
 
-- HTML and CSS page layouts and styling
-- JavaScript examples using arrays and objects
-- PHP examples with arrays, objects, and dynamic page output
-- Form processing and input validation
-- MySQL database access through PDO
-- Interactive course-registration examples
-- An index page for navigating the projects
+### PHP & Object-Oriented Programming
+- **PHP User Profile Objects** — model profile information with a PHP class and render escaped output.
+- **PHP Course Data Structures** — compare associative arrays with arrays of objects.
+- **PHP Course Object Collection** — represent course records with a class, getters, and calculated totals.
+- **Earth Volume Calculator** — use PHP constants and arithmetic to estimate a sphere's volume.
+
+### JavaScript Applications
+- **JavaScript Course Data Structures** — compare object properties with an array of course objects.
+- **Interactive Course Registration** — add and remove courses, prevent duplicate selections, and calculate credit totals.
+- **JavaScript Course Object Collection** — render a collection of course objects using DOM methods and array methods.
+- **Client-Side Form Validation** — validate form fields in the browser before submission.
+
+### Database Applications
+- **Publications Library Manager** — PHP and MySQL CRUD operations, prepared statements, search, pagination, and validation.
+- **PDO Course Database** — add and list course records using PDO and server-side validation.
+
+### Web Security & Server-Side Validation
+- **HTTP Basic Authentication Demo** — demonstrate HTTP authentication with credentials kept in a local configuration file.
+- **Server-Side Form Validation** — validate submitted data in PHP as a counterpart to client-side checks.
 
 ## Built With
 
-- HTML and CSS
-- JavaScript
-- PHP
+- PHP and object-oriented programming
+- JavaScript and DOM APIs
+- HTML5 and CSS
 - MySQL and PDO
 - Apache HTTP Server
 
@@ -24,9 +36,10 @@ A collection of web projects built with HTML, CSS, JavaScript, PHP, and MySQL. T
 
 1. Set up Apache with PHP and the PDO MySQL extension enabled.
 2. Place the repository in the server's document root.
-3. Copy `config.example.php` to `config.local.php`.
-4. Edit `config.local.php` with the database usernames and passwords for your local MySQL instance. This file is ignored by Git and must not be committed.
-5. Create the databases and tables required by the examples. The Publications example includes a SQL script in `discussion4/`.
-6. Start Apache and MySQL, then open `index.php` through your local server.
+3. Copy `config.example.php` to `config.local.php` and add your local database credentials. The local file is ignored by Git and must not be committed.
+4. For the Publications Library Manager, run `php-mysql-library-manager/schema.sql` in your local MySQL environment. **The script drops and recreates the `publications` database**, so do not run it against a database containing data you need.
+5. Create the `cmsc340` database and `mycourses` table required by the PDO Course Database example.
+6. For the HTTP Basic Authentication Demo, copy `php-http-basic-authentication/auth.example.php` to `auth.local.php` in that same folder and set local demo credentials. Never use a real account password.
+7. Start Apache and MySQL, then open `index.php` through your local server.
 
-Database-backed examples require their corresponding database and tables to exist. The local configuration file keeps credentials out of tracked source files.
+Database-backed projects require their corresponding databases and tables. These projects are learning and portfolio demonstrations, not claims of production deployment.

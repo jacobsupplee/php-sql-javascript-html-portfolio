@@ -1,4 +1,4 @@
--- SQL-Script-For-Publications.sql - SQL script to load data into Publications.classics table
+-- schema.sql - SQL script to load data into Publications.classics table
 
 /*
 
@@ -33,10 +33,10 @@ quit
 
 b)
 Batch:
-cd to folder where this script (SQL-Script-For-Publications.sql) is located  
+cd to folder where this script (schema.sql) is located  
 start a command window on Windows in the folder where the script is located
 inside the command window, invoke mysql
-"C:\Program Files\Ampps\mysql\bin\mysql" -u root -pmysql < SQL-Script-For-Publications.sql
+"C:\Program Files\Ampps\mysql\bin\mysql" -u root -pmysql < schema.sql
 
 */
 

@@ -1,5 +1,5 @@
 <?php
-// Discussion 8: client-side and server-side form validation.
+// Server-side form validation demonstration.
 
 function escape_output(string $value): string
 {
@@ -129,7 +129,7 @@ if ($submitted) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Discussion 8: Signup Form Validation</title>
+    <title>Server-Side Form Validation</title>
     <link rel="stylesheet" href="../design.css">
     <style>
         .signup-panel {
@@ -276,8 +276,8 @@ if ($submitted) {
 <body>
     <main class="container signup-panel">
         <header>
-            <h1>Signup Form Validation</h1>
-            <p>Discussion 8 · Client-side JavaScript and server-side PHP validation</p>
+            <h1>Server-Side Form Validation</h1>
+            <p>Server-side PHP validation for submitted form data</p>
         </header>
 
         <section>
@@ -305,7 +305,7 @@ if ($submitted) {
             <?php endif; ?>
 
             <?php if (!$success): ?>
-                <form method="post" action="adduser.php" onsubmit="return validateSignup(this)">
+                <form method="post" action="server-validation.php" onsubmit="return validateSignup(this)">
                     <div class="field">
                         <label for="forename">First name</label>
                         <input id="forename" type="text" name="forename" maxlength="32"

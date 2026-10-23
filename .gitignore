@@ -13,4 +13,4 @@ favicon.ico
 /config.local.php
 
 # Local HTTP authentication demo credentials
-/discussion5/auth.local.php
+/php-http-basic-authentication/auth.local.php

@@ -19,13 +19,13 @@ function escapeHtml($value)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Assignment 1: Personal Information and Earth's Volume</title>
+    <title>Earth Volume Calculator</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>
     <main class="container coursework-page assignment-one">
         <header>
-            <h1>Assignment 1</h1>
+            <h1>Earth Volume Calculator</h1>
             <p>Personal information and a calculation of Earth's volume</p>
         </header>
 

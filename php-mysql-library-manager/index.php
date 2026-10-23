@@ -1,4 +1,4 @@
-<?php // sqltest.php
+<?php // index.php
   // Protect the session cookie from JavaScript access and cross-site requests.
   $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' &&
     strtolower($_SERVER['HTTPS']) !== 'off';
@@ -40,7 +40,7 @@
   $searchQuery = $searchTerm !== '' ? '&search=' . rawurlencode($searchTerm) : '';
 
   try {
-    require_once __DIR__ . '/login.php';
+    require_once __DIR__ . '/database.php';
   } catch (Throwable $e) {
     // Configuration errors can contain sensitive paths or settings; log them privately.
     error_log('Publications database configuration failed: ' . $e->getMessage());
@@ -225,7 +225,7 @@
     $returnPage = $_POST['return_page'] ?? '1';
     $returnPage = ctype_digit($returnPage) ? max(1, (int) $returnPage) : 1;
     $returnSearch = trim($_POST['return_search'] ?? '');
-    $redirectUrl = 'sqltest.php?page=' . $returnPage;
+    $redirectUrl = 'index.php?page=' . $returnPage;
     if ($returnSearch !== '') {
       $redirectUrl .= '&search=' . rawurlencode($returnSearch);
     }
@@ -247,21 +247,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Publications Book Manager</title>
-    <link rel="stylesheet" href="sqltest.css">
+    <link rel="stylesheet" href="library-manager.css">
   </head>
   <body>
     <main>
       <h1>Publications Book Manager</h1>
       <p class="page-intro">Add a book to the Publications database or manage existing records.</p>
-      <form class="search-form" action="sqltest.php" method="get" role="search">
+      <form class="search-form" action="index.php" method="get" role="search">
         <label for="book-search">Search books</label>
         <div class="search-controls">
           <input id="book-search" type="search" name="search" value="$searchValue" placeholder="Title, author, or ISBN">
           <button type="submit">Search</button>
-          <a class="clear-search" href="sqltest.php">Clear</a>
+          <a class="clear-search" href="index.php">Clear</a>
         </div>
       </form>
-      <form class="book-form" action="sqltest.php" method="post">
+      <form class="book-form" action="index.php" method="post">
         <input type="hidden" name="csrf_token" value="$csrfToken">
         <input type="hidden" name="return_search" value="$searchValue">
         <div class="form-field">
@@ -374,7 +374,7 @@ _END;
 
       echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
       echo "<td>$year</td><td>$isbn</td><td>";
-      echo '<form action="sqltest.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
+      echo '<form action="index.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
       echo '<input type="hidden" name="csrf_token" value="' .
         htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
@@ -394,14 +394,14 @@ _END;
       echo '<nav class="pagination" aria-label="Book list pages">';
 
       if ($currentPage > 1) {
-        echo '<a href="sqltest.php?page=' . ($currentPage - 1) . $searchQuery . '" aria-label="Go to previous page">Previous</a>';
+        echo '<a href="index.php?page=' . ($currentPage - 1) . $searchQuery . '" aria-label="Go to previous page">Previous</a>';
       }
 
       $firstPage = max(1, $currentPage - 2);
       $lastPage = min($totalPages, $currentPage + 2);
 
       if ($firstPage > 1) {
-        echo '<a href="sqltest.php?page=1' . $searchQuery . '" aria-label="Go to page 1">1</a>';
+        echo '<a href="index.php?page=1' . $searchQuery . '" aria-label="Go to page 1">1</a>';
         if ($firstPage > 2) {
           echo '<span aria-hidden="true">…</span>';
         }
@@ -411,7 +411,7 @@ _END;
         if ($page === $currentPage) {
           echo '<span aria-current="page" aria-label="Current page, page ' . $page . '">' . $page . '</span>';
         } else {
-          echo '<a href="sqltest.php?page=' . $page . $searchQuery . '" aria-label="Go to page ' . $page . '">' . $page . '</a>';
+          echo '<a href="index.php?page=' . $page . $searchQuery . '" aria-label="Go to page ' . $page . '">' . $page . '</a>';
         }
       }
 
@@ -419,11 +419,11 @@ _END;
         if ($lastPage < $totalPages - 1) {
           echo '<span aria-hidden="true">…</span>';
         }
-        echo '<a href="sqltest.php?page=' . $totalPages . $searchQuery . '" aria-label="Go to page ' . $totalPages . '">' . $totalPages . '</a>';
+        echo '<a href="index.php?page=' . $totalPages . $searchQuery . '" aria-label="Go to page ' . $totalPages . '">' . $totalPages . '</a>';
       }
 
       if ($currentPage < $totalPages) {
-        echo '<a href="sqltest.php?page=' . ($currentPage + 1) . $searchQuery . '" aria-label="Go to next page">Next</a>';
+        echo '<a href="index.php?page=' . ($currentPage + 1) . $searchQuery . '" aria-label="Go to next page">Next</a>';
       }
 
       echo '</nav>';

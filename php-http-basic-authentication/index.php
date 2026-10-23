@@ -12,7 +12,7 @@ if (!is_file($configPath)) {
 try {
     $authConfig = require $configPath;
 } catch (Throwable $e) {
-    error_log('Discussion 5 authentication configuration failed: ' . $e->getMessage());
+    error_log('HTTP Basic Authentication Demo authentication configuration failed: ' . $e->getMessage());
     http_response_code(500);
     exit('Authentication could not be configured. Check the local configuration file.');
 }
@@ -43,7 +43,7 @@ $isAuthenticated =
 
 if (!$isAuthenticated) {
     // HTTP Basic Auth makes the browser display its built-in credential prompt.
-    header('WWW-Authenticate: Basic realm="Discussion 5", charset="UTF-8"');
+    header('WWW-Authenticate: Basic realm="Portfolio Authentication Demo", charset="UTF-8"');
     http_response_code(401);
     $pageTitle = 'Authentication required';
     $message = 'Enter the configured demo credentials to continue.';
@@ -61,7 +61,7 @@ if (!$isAuthenticated) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Discussion 5 - HTTP Authentication</title>
+    <title>HTTP Basic Authentication Demo</title>
     <link rel="stylesheet" href="../design.css">
 </head>
 <body>

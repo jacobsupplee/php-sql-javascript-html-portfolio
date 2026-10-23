@@ -1,5 +1,5 @@
 <?php
-//Loads the local database settings without putting credentials in this file
+// Load local database settings without putting credentials in this file
 $config = require __DIR__ . '/../config.local.php';
 
 if (!is_array($config) || !isset($config['publications']) ||

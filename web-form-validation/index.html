@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Discussion 8: Signup Form</title>
+    <title>Client-Side Form Validation</title>
     <link rel="stylesheet" href="../design.css">
-    <script src="validate_functions.js" defer></script>
+    <script src="validation.js" defer></script>
     <style>
         .legacy-signup {
             max-width: 680px;
@@ -79,13 +79,13 @@
 <body>
     <main class="container legacy-signup">
         <header>
-            <h1>Signup Form</h1>
-            <p>Discussion 8 · Client-side validation example</p>
+            <h1>Client-Side Form Validation</h1>
+            <p>Browser-side checks before submitting form data</p>
         </header>
 
         <p>Enter the information below. JavaScript checks the form before it is submitted, and PHP validates it again on the server.</p>
 
-        <form method="post" action="adduser.php" onsubmit="return validate(this)">
+        <form method="post" action="server-validation.php" onsubmit="return validate(this)">
             <div class="field">
                 <label for="forename">First name</label>
                 <input id="forename" type="text" name="forename" maxlength="32"
