@@ -1,4 +1,12 @@
 <?php // sqltest.php
+  // Protect the session cookie from JavaScript access and cross-site requests.
+  $isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' &&
+    strtolower($_SERVER['HTTPS']) !== 'off';
+  session_set_cookie_params([
+    'httponly' => true,
+    'secure' => $isHttps,
+    'samesite' => 'Lax',
+  ]);
   session_start();
 
   if (empty($_SESSION['csrf_token'])) {
