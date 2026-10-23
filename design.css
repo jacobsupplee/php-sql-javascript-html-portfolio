@@ -121,3 +121,174 @@ footer {
         font-size: 1.1em;
         font-weight: bold;
     }
+
+
+/* Coursework pages: scoped styles shared by Discussion 2, Discussion 3, and Assignment 1. */
+.coursework-page {
+    width: min(85%, 1000px);
+}
+
+.coursework-page section h2 {
+    margin-bottom: 1rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.profile-card {
+    min-width: 0;
+    padding: 1.25rem;
+    background: #f8f7fb;
+    border: 1px solid #e1dce8;
+    border-radius: 14px;
+}
+
+.profile-card h2 {
+    margin: 0 0 1rem;
+    color: #6f6884;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+}
+
+.profile-details {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.profile-details > div,
+.calculation-result {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #e5dfe8;
+}
+
+.profile-details > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.profile-details dt,
+.calculation-result span {
+    color: #716c7b;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.profile-details dd {
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.section-intro {
+    margin-top: -0.25rem;
+    color: #716c7b;
+}
+
+.course-list {
+    overflow: hidden;
+    border: 1px solid #e1dce8;
+    border-radius: 12px;
+}
+
+.course-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    background: #fffdf9;
+    border-bottom: 1px solid #eee8ef;
+}
+
+.course-row:nth-child(even) {
+    background: #f8f6fa;
+}
+
+.course-row:last-child {
+    border-bottom: 0;
+}
+
+.course-code {
+    font-weight: 700;
+}
+
+.credit-value {
+    color: #667f7b;
+    white-space: nowrap;
+}
+
+.credit-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0 0;
+    padding: 1rem;
+    color: #4b4b55;
+    background: #f0eef6;
+    border-radius: 10px;
+}
+
+.credit-total strong {
+    color: #5c5577;
+    font-size: 1.15rem;
+}
+
+.calculation-label {
+    margin-bottom: 0.35rem;
+    color: #716c7b;
+    font-weight: 700;
+}
+
+.formula {
+    margin: 0 0 1.25rem;
+    color: #5c5577;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    font-weight: 700;
+}
+
+.calculation-result {
+    padding: 0.9rem 0;
+}
+
+.calculation-result strong {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .coursework-page {
+        width: 92%;
+        margin-top: 1.5rem;
+    }
+
+    .coursework-page header {
+        padding: 1.5rem;
+    }
+
+    .coursework-page header h1 {
+        font-size: 1.8rem;
+    }
+
+    .coursework-page section {
+        padding: 1.25rem;
+    }
+
+    .profile-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .course-row,
+    .profile-details > div,
+    .calculation-result {
+        gap: 0.75rem;
+    }
+}
