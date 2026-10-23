@@ -113,11 +113,14 @@
       }
     }
 
-    if ($author === '' || $title === '' || $category === '' || $isbn === '' ||
-        !$validIsbn || $year === false || $year < -3000 || $year > 2100 || $year === 0) {
-      $formError = 'Enter all fields, a valid ISBN-10 or ISBN-13, and a year from 3000 BCE through 2100 CE. Use negative numbers for BCE; year 0 is not valid.';
+    if ($author === '' || $title === '' || $category === '' || $isbn === '' || $yearInput === '') {
+      $formError = 'Complete all fields before submitting the form.';
     } elseif ($tooLong) {
       $formError = 'Author and title must be 128 characters or fewer, category 16 or fewer, and ISBN 13 or fewer.';
+    } elseif (!$validIsbn) {
+      $formError = 'Enter a valid ISBN-10 or ISBN-13.';
+    } elseif ($year === false || $year < -3000 || $year > 2100 || $year === 0) {
+      $formError = 'Enter a year from 3000 BCE through 2100 CE. Use a negative number for BCE; year 0 is not valid.';
     } else {
       // Bind form values separately so they cannot change the SQL query.
       $query = "INSERT INTO classics
