@@ -1,209 +1,337 @@
-<?php // adduser.php
+<?php
+// Discussion 8: client-side and server-side form validation.
 
-  // Start with the PHP code
-
-  $forename = $surname = $username = $password = $age = $email = "";
-
-  if (isset($_POST['forename']))
-    $forename = fix_string($_POST['forename']);
-  if (isset($_POST['surname']))
-    $surname  = fix_string($_POST['surname']);
-  if (isset($_POST['username']))
-    $username = fix_string($_POST['username']);
-  if (isset($_POST['password']))
-    $password = fix_string($_POST['password']);
-  if (isset($_POST['age']))
-    $age      = fix_string($_POST['age']);
-  if (isset($_POST['email']))
-    $email    = fix_string($_POST['email']);
-
-  $fail  = validate_forename($forename);
-  $fail .= validate_surname($surname);
-  $fail .= validate_username($username);
-  $fail .= validate_password($password);
-  $fail .= validate_age($age);
-  $fail .= validate_email($email);
-
-  echo "<!DOCTYPE html>\n<html><head><title>An Example Form</title>";
-
-  if ($fail == "")
-  {
-    echo "</head><body>Form data successfully validated:
-      $forename, $surname, $username, $password, $age, $email.</body></html>";
-
-    // This is where you would enter the posted fields into a database,
-    // preferably using hash encryption for the password.
-
-	exit;
-  }
-
-  echo <<<_END
-
-    <!-- The HTML/JavaScript section -->
-
-    <style>
-      .signup {
-        border: 1px solid #999999;
-      font:   normal 14px helvetica; color:#444444;
-      }
-    </style>
-
-    <script>
-      function validate(form)
-      {
-        fail  = validateForename(form.forename.value)
-        fail += validateSurname(form.surname.value)
-        fail += validateUsername(form.username.value)
-        fail += validatePassword(form.password.value)
-        fail += validateAge(form.age.value)
-        fail += validateEmail(form.email.value)
-
-        //Student addition: if/else to prevent form submission if validation fails
-        if (fail == "")
-            return true
-        else
-        {
-            alert(fail)
-            return false
-        }
-      }
-
-      function validateForename(field)
-      {
-        return (field == "") ? "No Forename was entered.\\n" : ""
-      }
-
-      function validateSurname(field)
-      {
-        return (field == "") ? "No Surname was entered.\\n" : ""
-      }
-
-      function validateUsername(field)
-      {
-        if (field == "") return "No Username was entered.\\n"
-        else if (field.length < 5)
-          return "Usernames must be at least 5 characters.\\n"
-        else if (/[^a-zA-Z0-9_-]/.test(field))
-          return "Only a-z, A-Z, 0-9, - and _ allowed in Usernames.\\n"
-        return ""
-      }
-
-      function validatePassword(field)
-      {
-        if (field == "") return "No Password was entered.\\n"
-        else if (field.length < 6)
-          return "Passwords must be at least 6 characters.\\n"
-        else if (!/[a-z]/.test(field) || ! /[A-Z]/.test(field) ||
-                 !/[0-9]/.test(field))
-          return "Passwords require one each of a-z, A-Z and 0-9.\\n"
-        return ""
-      }
-
-      function validateAge(field)
-      {
-        if (isNaN(field)) return "No Age was entered.\\n"
-        else if (field < 18 || field > 110)
-          return "Age must be between 18 and 110.\\n"
-        return ""
-      }
-
-      function validateEmail(field)
-      {
-        if (field == "") return "No Email was entered.\\n"
-          else if (!((field.indexOf(".") > 0) &&
-                     (field.indexOf("@") > 0)) ||
-                    /[^a-zA-Z0-9.@_-]/.test(field))
-            return "The Email address is invalid.\\n"
-        return ""
-      }
-    </script>
-  </head>
-  <body>
-
-    <table border="0" cellpadding="2" cellspacing="5" bgcolor="#eeeeee">
-      <th colspan="2" align="center">Signup Form</th>
-
-        <tr><td colspan="2">Sorry, the following errors were found<br>
-          in your form: <p><font color=red size=1><i>$fail</i></font></p>
-        </td></tr>
-
-      <form method="post" action="adduser.php" onSubmit="return validate(this)">
-        <tr><td>Forename</td>
-          <td><input type="text" maxlength="32" name="forename" value="$forename">
-        </td></tr><tr><td>Surname</td>
-          <td><input type="text" maxlength="32" name="surname"  value="$surname">
-        </td></tr><tr><td>Username</td>
-          <td><input type="text" maxlength="16" name="username" value="$username">
-        </td></tr><tr><td>Password</td>
-          <td><input type="text" maxlength="12" name="password" value="$password">
-        </td></tr><tr><td>Age</td>
-          <td><input type="text" maxlength="3"  name="age"      value="$age">
-        </td></tr><tr><td>Email</td>
-          <td><input type="text" maxlength="64" name="email"    value="$email">
-        </td></tr><tr><td colspan="2" align="center"><input type="submit"
-          value="Signup"></td></tr>
-      </form>
-    </table>
-  </body>
-</html>
-
-_END;
-
-  // The PHP functions
-
-  function validate_forename($field)
-  {
-  	return ($field == "") ? "No Forename was entered<br>": "";
-  }
-  
-  function validate_surname($field)
-  {
-  	return($field == "") ? "No Surname was entered<br>" : "";
-  }
-  
-  function validate_username($field)
-  {
-    if ($field == "") return "No Username was entered<br>";
-    else if (strlen($field) < 5)
-      return "Usernames must be at least 5 characters<br>";
-    else if (preg_match("/[^a-zA-Z0-9_-]/", $field))
-      return "Only letters, numbers, - and _ in usernames<br>";
-    return "";		
-  }
-  
-  function validate_password($field)
-  {
-    if ($field == "") return "No Password was entered<br>";
-    else if (strlen($field) < 6)
-      return "Passwords must be at least 6 characters<br>";
-    else if (!preg_match("/[a-z]/", $field) ||
-             !preg_match("/[A-Z]/", $field) ||
-             !preg_match("/[0-9]/", $field))
-      return "Passwords require 1 each of a-z, A-Z and 0-9<br>";
-    return "";
-  }
-  
-  function validate_age($field)
-  {
-    if ($field == "") return "No Age was entered<br>";
-    else if ($field < 18 || $field > 110)
-      return "Age must be between 18 and 110<br>";
-    return "";
-  }
-  
-  function validate_email($field)
-  {
-    if ($field == "") return "No Email was entered<br>";
-      else if (!((strpos($field, ".") > 0) &&
-                 (strpos($field, "@") > 0)) ||
-                  preg_match("/[^a-zA-Z0-9.@_-]/", $field))
-        return "The Email address is invalid<br>";
-    return "";
-  }
-  
-  function fix_string($string)
+function escape_output(string $value): string
 {
-  // get_magic_quotes_gpc() was removed from PHP
-  return htmlentities($string);
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function validate_forename(string $field): string
+{
+    return trim($field) === '' ? 'Enter your first name.' : '';
+}
+
+function validate_surname(string $field): string
+{
+    return trim($field) === '' ? 'Enter your last name.' : '';
+}
+
+function validate_username(string $field): string
+{
+    if ($field === '') {
+        return 'Enter a username.';
+    }
+    if (strlen($field) < 5) {
+        return 'Usernames must be at least 5 characters.';
+    }
+    if (!preg_match('/^[a-zA-Z0-9_-]+$/', $field)) {
+        return 'Usernames may contain only letters, numbers, hyphens, and underscores.';
+    }
+    return '';
+}
+
+function validate_password(string $field): string
+{
+    if ($field === '') {
+        return 'Enter a password.';
+    }
+    if (strlen($field) < 8) {
+        return 'Passwords must be at least 8 characters.';
+    }
+    if (!preg_match('/[a-z]/', $field) ||
+        !preg_match('/[A-Z]/', $field) ||
+        !preg_match('/[0-9]/', $field)) {
+        return 'Passwords must include a lowercase letter, an uppercase letter, and a number.';
+    }
+    return '';
+}
+
+function validate_age(string $field): string
+{
+    if ($field === '' || filter_var($field, FILTER_VALIDATE_INT) === false) {
+        return 'Enter your age as a whole number.';
+    }
+    $age = (int) $field;
+    if ($age < 18 || $age > 110) {
+        return 'Age must be between 18 and 110.';
+    }
+    return '';
+}
+
+function validate_email(string $field): string
+{
+    if ($field === '' || filter_var($field, FILTER_VALIDATE_EMAIL) === false) {
+        return 'Enter a valid email address.';
+    }
+    return '';
+}
+
+$fields = ['forename', 'surname', 'username', 'password', 'age', 'email'];
+$values = array_fill_keys($fields, '');
+$errors = [];
+$submitted = $_SERVER['REQUEST_METHOD'] === 'POST';
+$success = false;
+
+if ($submitted) {
+    foreach ($fields as $field) {
+        $rawValue = $_POST[$field] ?? '';
+        if (!is_string($rawValue)) {
+            $errors[] = 'Invalid form submission. Please use the form below.';
+            continue;
+        }
+        $values[$field] = trim($rawValue);
+    }
+
+    // Validate only if all submitted fields had the expected scalar type.
+    if (!$errors) {
+        $validators = [
+            'forename' => 'validate_forename',
+            'surname' => 'validate_surname',
+            'username' => 'validate_username',
+            'password' => 'validate_password',
+            'age' => 'validate_age',
+            'email' => 'validate_email',
+        ];
+
+        foreach ($validators as $field => $validator) {
+            $error = $validator($values[$field]);
+            if ($error !== '') {
+                $errors[] = $error;
+            }
+        }
+    }
+
+    if (!$errors) {
+        $success = true;
+        // This coursework demo validates input only; it does not create an account.
+        // Never display, log, or repopulate the submitted password.
+        $values['password'] = '';
+    }
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discussion 8: Signup Form Validation</title>
+    <link rel="stylesheet" href="../design.css">
+    <style>
+        .signup-panel {
+            max-width: 760px;
+            margin: 2rem auto;
+        }
+
+        .signup-panel form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .signup-panel .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+
+        .signup-panel label {
+            font-weight: 700;
+        }
+
+        .signup-panel input {
+            width: 100%;
+            min-height: 2.75rem;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #b9b3c2;
+            border-radius: 0.5rem;
+            font: inherit;
+        }
+
+        .signup-panel input:focus-visible,
+        .signup-panel button:focus-visible {
+            outline: 3px solid #2764c5;
+            outline-offset: 2px;
+        }
+
+        .signup-panel .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .signup-panel button {
+            min-height: 2.75rem;
+            padding: 0.65rem 1rem;
+            border: 1px solid #667f7b;
+            border-radius: 0.5rem;
+            color: white;
+            background: #667f7b;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .signup-panel button:hover {
+            background: #526a66;
+        }
+
+        .signup-panel .notice {
+            padding: 1rem 1.1rem;
+            margin: 1rem 0;
+            border-radius: 0.6rem;
+        }
+
+        .signup-panel .notice-success {
+            color: #185c37;
+            background: #edf8f0;
+            border: 1px solid #8dc9a1;
+        }
+
+        .signup-panel .notice-error {
+            color: #8f2020;
+            background: #fff0ef;
+            border: 1px solid #e7a5a1;
+        }
+
+        .signup-panel .notice ul {
+            list-style: disc;
+            margin: 0.5rem 0 0 1.25rem;
+        }
+
+        .signup-panel .hint {
+            margin: 0;
+            color: #656170;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .signup-panel form {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .signup-panel .form-actions {
+                grid-column: 1;
+            }
+        }
+    </style>
+    <script>
+        function validateSignup(form) {
+            const errors = [];
+            const forename = form.elements.forename.value.trim();
+            const surname = form.elements.surname.value.trim();
+            const username = form.elements.username.value.trim();
+            const password = form.elements.password.value;
+            const age = form.elements.age.value.trim();
+            const email = form.elements.email.value.trim();
+
+            if (!forename) errors.push('Enter your first name.');
+            if (!surname) errors.push('Enter your last name.');
+            if (username.length < 5) {
+                errors.push('Usernames must be at least 5 characters.');
+            } else if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+                errors.push('Usernames may contain only letters, numbers, hyphens, and underscores.');
+            }
+
+            if (password.length < 8 ||
+                !/[a-z]/.test(password) ||
+                !/[A-Z]/.test(password) ||
+                !/[0-9]/.test(password)) {
+                errors.push('Passwords must be at least 8 characters and include lowercase, uppercase, and numeric characters.');
+            }
+
+            if (!/^\d+$/.test(age) || Number(age) < 18 || Number(age) > 110) {
+                errors.push('Age must be a whole number between 18 and 110.');
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errors.push('Enter a valid email address.');
+            }
+
+            if (errors.length) {
+                alert(errors.join('\n'));
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <main class="container signup-panel">
+        <header>
+            <h1>Signup Form Validation</h1>
+            <p>Discussion 8 · Client-side JavaScript and server-side PHP validation</p>
+        </header>
+
+        <section>
+            <h2>Create an Account (Validation Demo)</h2>
+            <p>This demonstration validates form input in the browser and again on the server. It does not create or store an account.</p>
+
+            <?php if ($success): ?>
+                <div class="notice notice-success" role="status">
+                    <strong>Form data successfully validated.</strong>
+                    <p>All fields passed server-side validation. The password is intentionally not displayed.</p>
+                    <p><strong>Name:</strong> <?= escape_output($values['forename']) ?> <?= escape_output($values['surname']) ?></p>
+                    <p><strong>Username:</strong> <?= escape_output($values['username']) ?></p>
+                    <p><strong>Age:</strong> <?= escape_output($values['age']) ?></p>
+                    <p><strong>Email:</strong> <?= escape_output($values['email']) ?></p>
+                </div>
+            <?php elseif ($errors): ?>
+                <div class="notice notice-error" role="alert">
+                    <strong>Please correct the following:</strong>
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= escape_output($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!$success): ?>
+                <form method="post" action="adduser.php" onsubmit="return validateSignup(this)">
+                    <div class="field">
+                        <label for="forename">First name</label>
+                        <input id="forename" type="text" name="forename" maxlength="32"
+                               autocomplete="given-name" required
+                               value="<?= escape_output($values['forename']) ?>">
+                    </div>
+                    <div class="field">
+                        <label for="surname">Last name</label>
+                        <input id="surname" type="text" name="surname" maxlength="32"
+                               autocomplete="family-name" required
+                               value="<?= escape_output($values['surname']) ?>">
+                    </div>
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" name="username" minlength="5" maxlength="16"
+                               pattern="[a-zA-Z0-9_-]+" autocomplete="username" required
+                               value="<?= escape_output($values['username']) ?>">
+                        <p class="hint">At least 5 characters; letters, numbers, _ and - only.</p>
+                    </div>
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" minlength="8" maxlength="128"
+                               autocomplete="new-password" required>
+                        <p class="hint">At least 8 characters, including uppercase, lowercase, and a number.</p>
+                    </div>
+                    <div class="field">
+                        <label for="age">Age</label>
+                        <input id="age" type="number" name="age" min="18" max="110" step="1"
+                               inputmode="numeric" required value="<?= escape_output($values['age']) ?>">
+                    </div>
+                    <div class="field">
+                        <label for="email">Email address</label>
+                        <input id="email" type="email" name="email" maxlength="254"
+                               autocomplete="email" required value="<?= escape_output($values['email']) ?>">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Validate signup</button>
+                    </div>
+                </form>
+            <?php endif; ?>
+        </section>
+    </main>
+</body>
+</html>
