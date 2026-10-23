@@ -164,7 +164,7 @@
     exit;
   }
 
-  $csrfToken = htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8');
+  $csrfToken = htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
   echo <<<_END
   <!DOCTYPE html>
@@ -205,10 +205,10 @@
 _END;
 
   if ($message !== '') {
-    echo '<p role="status">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+    echo '<p role="status">' . htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>';
   }
   if ($formError !== '') {
-    echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES, 'UTF-8') . '</p>';
+    echo '<p role="alert">' . htmlspecialchars($formError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</p>';
   }
 
   try {
@@ -233,26 +233,26 @@ _END;
 
     foreach ($books as $row)
     {
-      $author = htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8');
-      $title = htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8');
-      $category = htmlspecialchars($row->category, ENT_QUOTES, 'UTF-8');
+      $author = htmlspecialchars($row->author, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $title = htmlspecialchars($row->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $category = htmlspecialchars($row->category, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
       $yearValue = (int) $row->year;
       $yearLabel = $yearValue < 0
         ? abs($yearValue) . ' BCE'
         : (string) $yearValue;
-      $year = htmlspecialchars($yearLabel, ENT_QUOTES, 'UTF-8');
-      $isbn = htmlspecialchars($row->isbn, ENT_QUOTES, 'UTF-8');
+      $year = htmlspecialchars($yearLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $isbn = htmlspecialchars($row->isbn, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
       echo "<tr><td>$author</td><td>$title</td><td>$category</td>";
       echo "<td>$year</td><td>$isbn</td><td>";
       echo '<form action="sqltest.php" method="post" onsubmit="return confirm(\'Delete this book?\')">';
       echo '<input type="hidden" name="csrf_token" value="' .
-        htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') . '">';
+        htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
       echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
       echo '<button type="submit" aria-label="Delete ' .
-        htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8') .
-        ' by ' . htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8') .
+        htmlspecialchars($row->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') .
+        ' by ' . htmlspecialchars($row->author, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') .
         '">Delete</button></form></td></tr>';
     }
 
