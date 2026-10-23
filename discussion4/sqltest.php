@@ -242,7 +242,10 @@ _END;
         htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') . '">';
       echo '<input type="hidden" name="delete" value="yes">';
       echo '<input type="hidden" name="isbn" value="' . $isbn . '">';
-      echo '<button type="submit">Delete</button></form></td></tr>';
+      echo '<button type="submit" aria-label="Delete ' .
+        htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8') .
+        ' by ' . htmlspecialchars($row->author, ENT_QUOTES, 'UTF-8') .
+        '">Delete</button></form></td></tr>';
     }
 
     echo '</tbody></table>';
