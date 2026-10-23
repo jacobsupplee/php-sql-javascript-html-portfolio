@@ -56,6 +56,69 @@ h1 + .page-intro {
   margin-top: 1.5rem;
 }
 
+
+.search-form {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.search-form label {
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.search-controls input[type="search"] {
+  flex: 1 1 16rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.75rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid #aeb9c7;
+  border-radius: 0.4rem;
+  font: inherit;
+}
+
+.search-controls input[type="search"]:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.search-form button {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.search-form button:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.clear-search {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  padding: 0.45rem 0.65rem;
+  color: var(--accent);
+  border-radius: 0.4rem;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.clear-search:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
 .empty-state {
   margin: 1.5rem 0;
   padding: 1.25rem;
