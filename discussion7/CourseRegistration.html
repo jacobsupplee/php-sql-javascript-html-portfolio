@@ -1,57 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <!-- Browser tab -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Registration</title>
-
-    <!-- Imports design.css styling -->
     <link rel="stylesheet" href="../design.css">
 </head>
 
 <body>
-
-    <div class="container">
-
-        <!-- Page header -->
+    <div class="container coursework-page course-registration">
         <header>
             <h1>Course Registration</h1>
-            <p>Register for new courses and calculate credit hours. </p>
+            <p>Select courses, manage your registration, and calculate total credit hours.</p>
         </header>
 
-        <!-- Course selection -->
-        <section>
-            <h2>Select a Course</h2>
+        <main>
+            <section>
+                <h2>Select a Course</h2>
+                <label for="courseSelect">Available courses</label>
+                <select id="courseSelect">
+                    <option value="">-- Select a Course --</option>
+                </select>
+                <p id="selectionMessage" class="section-intro" role="status" aria-live="polite">
+                    Choose a course from the list to add it to your registration.
+                </p>
+            </section>
 
-            <!-- Dropdown menu -->
-            <select id="courseSelect">
-                <option value="">-- Select a Course --</option>
-            </select>
-        </section>
+            <section>
+                <h2>Selected Courses</h2>
+                <div id="selectedCourses" class="registration-list">
+                    <p class="empty-state">No courses selected.</p>
+                </div>
+            </section>
 
-        <!-- Display selected course -->
-        <section>
-            <h2>Selected Courses</h2>
-            <div id="selectedCourses">
-                No courses selected.
-            </div>
-        </section>
+            <section>
+                <h2>Total Credit Hours</h2>
+                <p id="totalHours" class="registration-total" aria-live="polite">0 credits</p>
+                <button id="resetButton" type="button">Reset Registration</button>
+            </section>
+        </main>
 
-        <!-- Total credit hours -->
-        <section>
-            <h2>Total Credit Hours</h2>
-            <div id="totalHours">0</div>
-            <button id="resetButton">Reset</button>
-        </section>
-
+        <footer>
+            CMSC 340 · Web Programming
+        </footer>
     </div>
 
     <script>
-        //Beginning of JavaScript code
-
-        //Define Course class w/ code, creditHours attributes
+        // Represents one course and its credit-hour value.
         class Course {
             constructor(code, creditHours) {
                 this.code = code;
@@ -59,7 +54,7 @@
             }
         }
 
-        //Construct an array of Course objects
+        // Available courses that can be added to the registration.
         const courses = [
             new Course("CMSC 412", 3),
             new Course("CMSC 430", 3),
@@ -70,78 +65,120 @@
             new Course("CMIT 426", 3)
         ];
 
-        //Populates course selection dropdown menu
         const courseSelect = document.getElementById("courseSelect");
+        const selectedCoursesDiv = document.getElementById("selectedCourses");
+        const totalHoursDiv = document.getElementById("totalHours");
+        const selectionMessage = document.getElementById("selectionMessage");
+        const resetButton = document.getElementById("resetButton");
 
+        // Fill the dropdown with the available courses.
         courses.forEach(function (course) {
             const option = document.createElement("option");
-            option.textContent = course.code;
-            option.value = course.creditHours;
+            option.value = course.code;
+            option.textContent = course.code + " (" + course.creditHours + " credits)";
             courseSelect.appendChild(option);
         });
 
-        //Initialize array of course selections
+        // Holds the Course objects currently selected by the user.
         const selectedCourses = [];
 
-        //Initializes page elements
-        const selectedCoursesDiv = document.getElementById("selectedCourses");
-        const totalHoursDiv = document.getElementById("totalHours");
+        // Re-render the list and total whenever the selection changes.
+        function renderRegistration() {
+            selectedCoursesDiv.replaceChildren();
 
-        //EventListener to detect changes in course selection
-        courseSelect.addEventListener("change", function () {
-            const selectedCode = courseSelect.options[courseSelect.selectedIndex].text;
+            if (selectedCourses.length === 0) {
+                const emptyMessage = document.createElement("p");
+                emptyMessage.className = "empty-state";
+                emptyMessage.textContent = "No courses selected.";
+                selectedCoursesDiv.appendChild(emptyMessage);
+            } else {
+                selectedCourses.forEach(function (course) {
+                    const courseRow = document.createElement("div");
+                    courseRow.className = "registration-row";
 
-            if (courseSelect.value === "") {
+                    const courseInfo = document.createElement("span");
+                    courseInfo.textContent = course.code + " — " + course.creditHours + " credits";
+
+                    const removeButton = document.createElement("button");
+                    removeButton.type = "button";
+                    removeButton.className = "remove-course";
+                    removeButton.textContent = "Remove";
+                    removeButton.setAttribute("aria-label", "Remove " + course.code);
+                    removeButton.addEventListener("click", function () {
+                        removeCourse(course.code);
+                    });
+
+                    courseRow.append(courseInfo, removeButton);
+                    selectedCoursesDiv.appendChild(courseRow);
+                });
+            }
+
+            const totalHours = selectedCourses.reduce(function (total, course) {
+                return total + course.creditHours;
+            }, 0);
+
+            totalHoursDiv.textContent = totalHours + (totalHours === 1 ? " credit" : " credits");
+        }
+
+        // Add a course unless it is already registered.
+        function addCourse(courseCode) {
+            const selectedCourse = courses.find(function (course) {
+                return course.code === courseCode;
+            });
+
+            if (!selectedCourse) {
                 return;
             }
 
-            const selectedCourse = courses.find(function (course) {
-                return course.code === selectedCode;
+            const alreadySelected = selectedCourses.some(function (course) {
+                return course.code === selectedCourse.code;
             });
 
-            //Prevent duplicate course selections
-            if (selectedCourses.some(function (course) {
-                return course.code === selectedCourse.code;
-            })) {
+            if (alreadySelected) {
+                selectionMessage.textContent = selectedCourse.code + " is already in your registration.";
                 return;
             }
 
             selectedCourses.push(selectedCourse);
-            selectedCoursesDiv.innerHTML = "";
+            selectionMessage.textContent = selectedCourse.code + " added successfully.";
+            renderRegistration();
+        }
 
-            //Loops through selected courses and displays
-            selectedCourses.forEach(function (course) {
-                const courseElement = document.createElement("p");
-                courseElement.textContent = course.code + " - " + course.creditHours + " credit hours";
-                selectedCoursesDiv.appendChild(courseElement);
+        // Remove one course without clearing the rest.
+        function removeCourse(courseCode) {
+            const courseIndex = selectedCourses.findIndex(function (course) {
+                return course.code === courseCode;
             });
 
-            //Calculate total credit hours
-            let totalHours = 0;
+            if (courseIndex === -1) {
+                return;
+            }
 
-            selectedCourses.forEach(function (course) {
-                totalHours += course.creditHours;
-            });
+            selectedCourses.splice(courseIndex, 1);
+            selectionMessage.textContent = courseCode + " removed from your registration.";
+            renderRegistration();
+        }
 
-            totalHoursDiv.textContent = totalHours;
+        // Handle changes to the dropdown.
+        courseSelect.addEventListener("change", function () {
+            if (courseSelect.value === "") {
+                return;
+            }
 
-            //Verify selected course
-            console.log(selectedCourses);
-        });
-
-        //Reset course selections
-        const resetButton = document.getElementById("resetButton");
-
-        resetButton.addEventListener("click", function () {
-            selectedCourses.length = 0;
-            selectedCoursesDiv.innerHTML = "No courses selected.";
-            totalHoursDiv.textContent = "0";
+            addCourse(courseSelect.value);
             courseSelect.value = "";
         });
 
-        //Verify creation of array
-        console.log(courses);
-    </script>
+        // Reset the full registration.
+        resetButton.addEventListener("click", function () {
+            selectedCourses.length = 0;
+            courseSelect.value = "";
+            selectionMessage.textContent = "Registration has been reset.";
+            renderRegistration();
+        });
 
+        // Show the initial empty state and zero-credit total.
+        renderRegistration();
+    </script>
 </body>
 </html>
