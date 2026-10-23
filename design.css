@@ -466,3 +466,134 @@ footer {
         padding: 0.7rem;
     }
 }
+
+
+/* Assignment 4: PDO course database page. */
+.assignment-four-message {
+    margin: 0 0 1.25rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+}
+
+.assignment-four-message.success {
+    color: #365f50;
+    background: #edf6f0;
+    border-color: #cfe5d6;
+}
+
+.assignment-four-message.error {
+    color: #804c56;
+    background: #fbf0f1;
+    border-color: #edd5d9;
+}
+
+.assignment-four-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.assignment-four-field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.assignment-four-field label {
+    color: #5c5577;
+    font-weight: 700;
+}
+
+.assignment-four-field input {
+    width: 100%;
+    max-width: 560px;
+    box-sizing: border-box;
+    padding: 0.75rem 0.85rem;
+    color: #4b4b55;
+    background: #fffdf9;
+    border: 1px solid #cfc5d9;
+    border-radius: 9px;
+    font: inherit;
+}
+
+.assignment-four-field input:focus-visible,
+.assignment-four-form button:focus-visible {
+    outline: 3px solid #a9bfd8;
+    outline-offset: 2px;
+}
+
+.assignment-four-form button {
+    justify-self: start;
+    padding: 0.7rem 1.1rem;
+    color: #4b4b55;
+    background: #f0eef6;
+    border: 1px solid #d9d1e2;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.assignment-four-form button:hover {
+    background: #e5dfef;
+}
+
+.assignment-four-count {
+    margin-top: -0.5rem;
+    color: #716c7b;
+}
+
+.assignment-four-empty {
+    margin: 0;
+    padding: 1rem;
+    color: #716c7b;
+    background: #f8f6fa;
+    border-radius: 10px;
+}
+
+.assignment-four-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e1dce8;
+    border-radius: 12px;
+}
+
+.assignment-four-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.assignment-four-table th,
+.assignment-four-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eee8ef;
+    vertical-align: top;
+}
+
+.assignment-four-table thead th {
+    color: #5c5577;
+    background: #f0eef6;
+}
+
+.assignment-four-table tbody tr:nth-child(even) {
+    background: #f8f6fa;
+}
+
+.assignment-four-table tbody tr:last-child td {
+    border-bottom: 1px solid #eee8ef;
+}
+
+.assignment-four-table tfoot th,
+.assignment-four-table tfoot td {
+    color: #5c5577;
+    background: #f0eef6;
+    font-weight: 700;
+    border-bottom: 0;
+}
+
+@media (max-width: 640px) {
+    .assignment-four-table th,
+    .assignment-four-table td {
+        padding: 0.7rem;
+    }
+}
