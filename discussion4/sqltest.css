@@ -63,6 +63,10 @@ input[type="submit"]:focus-visible {
   background: #f1f3f5;
 }
 
+.book-table tbody tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
 button,
 input[type="submit"] {
   cursor: pointer;
