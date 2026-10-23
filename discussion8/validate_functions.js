@@ -1,69 +1,86 @@
-function validate(form)
-{
-  fail  = validateForename(form.forename.value)
-  fail += validateSurname(form.surname.value)
-  fail += validateUsername(form.username.value)
-  fail += validatePassword(form.password.value)
-  fail += validateAge(form.age.value)
-  fail += validateEmail(form.email.value)
+// Client-side checks improve feedback, but adduser.php must validate again.
+function validate(form) {
+    const errors = [
+        validateForename(form.elements.forename.value),
+        validateSurname(form.elements.surname.value),
+        validateUsername(form.elements.username.value),
+        validatePassword(form.elements.password.value),
+        validateAge(form.elements.age.value),
+        validateEmail(form.elements.email.value)
+    ].filter(Boolean);
 
-  //Student addition: if/else to prevent form submission if validation fails
-  if (fail == "")
-    return true
-  else
-  {
-    alert(fail)
-    return false
-  }
+    if (errors.length > 0) {
+        alert(errors.join("\n"));
+        return false;
+    }
 
+    return true;
 }
 
-function validateForename(field)
-{
-  return (field == "") ? "No Forename was entered.\n" : ""
+function validateForename(field) {
+    return field.trim() === "" ? "Enter your first name." : "";
 }
 
-function validateSurname(field)
-{
-  return (field == "") ? "No Surname was entered.\n" : ""
+function validateSurname(field) {
+    return field.trim() === "" ? "Enter your last name." : "";
 }
 
-function validateUsername(field)
-{
-  if (field == "") return "No Username was entered.\n"
-  else if (field.length < 5)
-    return "Usernames must be at least 5 characters.\n"
-  else if (/[^a-zA-Z0-9_-]/.test(field))
-    return "Only a-z, A-Z, 0-9, - and _ allowed in Usernames.\n"
-  return ""
+function validateUsername(field) {
+    const username = field.trim();
+
+    if (username === "") {
+        return "Enter a username.";
+    }
+    if (username.length < 5) {
+        return "Usernames must be at least 5 characters.";
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+        return "Usernames may contain only letters, numbers, hyphens, and underscores.";
+    }
+
+    return "";
 }
 
-function validatePassword(field)
-{
-  if (field == "") return "No Password was entered.\n"
-  else if (field.length < 6)
-    return "Passwords must be at least 6 characters.\n"
-  else if (! /[a-z]/.test(field) ||
-           ! /[A-Z]/.test(field) ||
-           ! /[0-9]/.test(field))
-    return "Passwords require one each of a-z, A-Z and 0-9.\n"
-  return ""
+function validatePassword(field) {
+    // PHP currently trims submitted fields, so match that behavior here.
+    const password = field.trim();
+
+    if (password === "") {
+        return "Enter a password.";
+    }
+    if (password.length < 8 || password.length > 128) {
+        return "Passwords must be between 8 and 128 characters.";
+    }
+    if (!/[a-z]/.test(password) ||
+        !/[A-Z]/.test(password) ||
+        !/[0-9]/.test(password)) {
+        return "Passwords must include a lowercase letter, an uppercase letter, and a number.";
+    }
+
+    return "";
 }
 
-function validateAge(field)
-{
-  if (isNaN(field)) return "No Age was entered.\\n"
-  else if (field < 18 || field > 110)
-    return "Age must be between 18 and 110.\n"
-  return ""
+function validateAge(field) {
+    const ageText = field.trim();
+
+    if (!/^\d+$/.test(ageText)) {
+        return "Enter your age as a whole number.";
+    }
+
+    const age = Number(ageText);
+    if (age < 18 || age > 110) {
+        return "Age must be between 18 and 110.";
+    }
+
+    return "";
 }
 
-function validateEmail(field)
-{
-  if (field == "") return "No Email was entered.\n"
-    else if (!((field.indexOf(".") > 0) &&
-               (field.indexOf("@") > 0)) ||
-               /[^a-zA-Z0-9.@_-]/.test(field))
-      return "The Email address is invalid.\n"
-  return ""
+function validateEmail(field) {
+    const email = field.trim();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return "Enter a valid email address.";
+    }
+
+    return "";
 }
