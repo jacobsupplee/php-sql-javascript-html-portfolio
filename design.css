@@ -377,3 +377,92 @@ footer {
         flex-direction: column;
     }
 }
+
+
+/* Assignment 2: PHP array of course objects. */
+.assignment-two-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.assignment-two-summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.1rem 1.25rem;
+    background: #f0eef6;
+    border-radius: 12px;
+}
+
+.assignment-two-summary span {
+    color: #716c7b;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.assignment-two-summary strong {
+    color: #5c5577;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+}
+
+.assignment-two-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e1dce8;
+    border-radius: 12px;
+}
+
+.assignment-two-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.assignment-two-table th,
+.assignment-two-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eee8ef;
+    vertical-align: top;
+}
+
+.assignment-two-table th {
+    color: #5c5577;
+    background: #f0eef6;
+    font-size: 0.92rem;
+}
+
+.assignment-two-table tbody tr:nth-child(even) {
+    background: #f8f6fa;
+}
+
+.assignment-two-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.assignment-two-table th:first-child,
+.assignment-two-table td:first-child,
+.assignment-two-table th:last-child,
+.assignment-two-table td:last-child {
+    white-space: nowrap;
+}
+
+.assignment-two-answer {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    background: #f8f6fa;
+    border-left: 4px solid #a9bfd8;
+    border-radius: 0 10px 10px 0;
+}
+
+@media (max-width: 640px) {
+    .assignment-two-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .assignment-two-table th,
+    .assignment-two-table td {
+        padding: 0.7rem;
+    }
+}
